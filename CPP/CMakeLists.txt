@@ -21,3 +21,5 @@ add_executable(main main.cpp)
 # Link with Geant4 libraries
 target_link_libraries(main ${ROOT_LIBRARIES})
 
+add_executable(compare compare.cpp)
+target_link_libraries(compare ${ROOT_LIBRARIES})

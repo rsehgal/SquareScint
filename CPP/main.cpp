@@ -20,6 +20,13 @@ int main(int argc, char *argv[])
   TApplication *fApp = new TApplication("fAPP", NULL, NULL);
   TFile *fp          = new TFile(argv[1], "r");
   TTree *Data_F      = (TTree *)fp->Get("Data_F");
+
+  std::string outfile="output.root";
+  if(argc > 2)
+	outfile = std::string(argv[2]);
+
+  //TFile *outputFile = new TFile(outfile.c_str(),"RECREATE");
+
   // Declaration of leaves types
   UShort_t Channel;
   ULong64_t Timestamp;
@@ -72,13 +79,16 @@ int main(int argc, char *argv[])
   TH2F *h_dt_q    = new TH2F("h_dt_q", "DeltaT vs Q1; Q1; T1 - T0 (ns)", 1000, 0, 1000, 500, -50, 50);
 
   TH1F *histDelTSlab = new TH1F("DelTSlab", "DelTSlab", 1000, -20000, 20000); // ns
-  TH1F *histQ0       = new TH1F("Q0", "Q0", 2048, 0, 8192);                   // ns
-  TH1F *histQ1       = new TH1F("Q1", "Q1", 2048, 0, 8192);                   // ns
-  TH1F *histQ2       = new TH1F("Q2", "Q2", 2048, 0, 8192);                   // ns
-  TH1F *histQ3       = new TH1F("Q3", "Q3", 2048, 0, 8192);                   // ns
+  TH1F *histQ0       = new TH1F("Q0", "Q0", 512, 0, 8192);                   // ns
+  TH1F *histQ1       = new TH1F("Q1", "Q1", 512, 0, 8192);                   // ns
+  TH1F *histQ2       = new TH1F("Q2", "Q2", 512, 0, 8192);                   // ns
+  TH1F *histQ3       = new TH1F("Q3", "Q3", 512, 0, 8192);                   // ns
+  TH1F *histRatio_0_1 = new TH1F("Ratio_0_1","Ratio_0_1",100,0,5);
   TH1F *histRatio_0_2 = new TH1F("Ratio_0_2","Ratio_0_2",100,0,5);
-  TH1F *histRatio_1_3 = new TH1F("Ratio_1_3","Ratio_1_3",100,0,5);
+  TH1F *histRatio_0_3 = new TH1F("Ratio_0_3","Ratio_0_3",100,0,5);
   TH1F *histRatio_1_2 = new TH1F("Ratio_1_2","Ratio_1_2",100,0,5);
+  TH1F *histRatio_1_3 = new TH1F("Ratio_1_3","Ratio_1_3",100,0,5);
+  TH1F *histRatio_2_3 = new TH1F("Ratio_2_3","Ratio_2_3",100,0,5);
   // std::cout << "**************************************" << std::endl;
   std::sort(vecOfHits.begin(), vecOfHits.end(), SortHits);
 
@@ -208,9 +218,12 @@ int main(int argc, char *argv[])
         histQ2->Fill(q2);
         histQ3->Fill(q3);
 
+	histRatio_0_1->Fill(1.*q0/q1);
 	histRatio_0_2->Fill(1.*q0/q2);
-	histRatio_1_3->Fill(1.*q1/q3);
+	histRatio_0_3->Fill(1.*q0/q3);
 	histRatio_1_2->Fill(1.*q1/q2);
+	histRatio_1_3->Fill(1.*q1/q3);
+	histRatio_2_3->Fill(1.*q2/q3);
       }
     }
   }
@@ -229,6 +242,15 @@ int main(int argc, char *argv[])
   histQ1->SetTitle("PMT_1");
   histQ2->SetTitle("PMT_2");
   histQ3->SetTitle("PMT_3");
+
+  //outputFile->cd();
+  //histQ0->Write();
+  //histQ1->Write();
+  //histQ2->Write();
+  //histQ3->Write();
+
+  //outputFile->Close();
+
   TCanvas *chargeCanvas = new TCanvas("Charge_Q0_Q1_Q2_Q3", "Charge_Q0_Q1_Q2_Q3");
   histQ0->Draw("hist");
   histQ1->Draw("histsames");
@@ -246,30 +268,41 @@ int main(int argc, char *argv[])
   histQMean->Draw();
 
   TCanvas *ratioCan = new TCanvas("ChargeRatio","ChargeRatio");
-  histRatio_0_2->SetLineColor(1);
+
+  histRatio_0_1->SetLineWidth(2);
   histRatio_0_2->SetLineWidth(2);
-  histRatio_0_2->SetTitle("C02");
-  histRatio_0_2->Draw("hist");
-  histRatio_1_3->SetLineColor(2);
-  histRatio_1_3->SetLineWidth(2);
-  histRatio_1_3->SetTitle("C13");
-  histRatio_1_3->Draw("histsames");
-
-  histRatio_1_2->SetLineColor(4);
+  histRatio_0_3->SetLineWidth(2);
   histRatio_1_2->SetLineWidth(2);
-  histRatio_1_2->SetTitle("C12");
-  histRatio_1_2->Draw("histsames");
+  histRatio_1_3->SetLineWidth(2);
+  histRatio_2_3->SetLineWidth(2);
 
-  new TCanvas;
-  histRatio_1_2->Draw("hist");
+  histRatio_0_1->SetLineColor(1);
+  histRatio_0_2->SetLineColor(2);
+  histRatio_0_3->SetLineColor(3);
+  histRatio_1_2->SetLineColor(4);
+  histRatio_1_3->SetLineColor(6);
+  histRatio_2_3->SetLineColor(7);
+
+
+  histRatio_0_1->SetTitle("C01");
+  histRatio_0_2->SetTitle("C02");
+  histRatio_0_3->SetTitle("C03");
+  histRatio_1_2->SetTitle("C12");
+  histRatio_1_3->SetTitle("C13");
+  histRatio_2_3->SetTitle("C23");
+
+  histRatio_0_1->Draw("hist");
+  histRatio_0_2->Draw("histsames");
+  histRatio_0_3->Draw("histsames");
+  histRatio_1_2->Draw("histsames");
+  histRatio_1_3->Draw("histsames");
+  histRatio_2_3->Draw("histsames");
   
   ratioCan->BuildLegend();
 
-  
+  //ULong64_t integral = histQMean->Integral(histQMean->FindBin(500), histQMean->FindBin(4000));
 
-  ULong64_t integral = histQMean->Integral(histQMean->FindBin(500), histQMean->FindBin(4000));
-
-  std::cout << "Integral : " << integral << std::endl;
+  //std::cout << "Integral : " << integral << std::endl;
 
   //  return 0;
 
@@ -279,5 +312,6 @@ int main(int argc, char *argv[])
     histQMean->Draw();
 
    */
+  //outputFile->Close();
   fApp->Run();
 }
