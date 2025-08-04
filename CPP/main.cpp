@@ -21,11 +21,10 @@ int main(int argc, char *argv[])
   TFile *fp          = new TFile(argv[1], "r");
   TTree *Data_F      = (TTree *)fp->Get("Data_F");
 
-  std::string outfile="output.root";
-  if(argc > 2)
-	outfile = std::string(argv[2]);
+  std::string outfile = "output.root";
+  if (argc > 2) outfile = std::string(argv[2]);
 
-  //TFile *outputFile = new TFile(outfile.c_str(),"RECREATE");
+  // TFile *outputFile = new TFile(outfile.c_str(),"RECREATE");
 
   // Declaration of leaves types
   UShort_t Channel;
@@ -79,25 +78,25 @@ int main(int argc, char *argv[])
   TH2F *h_dt_q    = new TH2F("h_dt_q", "DeltaT vs Q1; Q1; T1 - T0 (ns)", 1000, 0, 1000, 500, -50, 50);
 
   TH1F *histDelTSlab = new TH1F("DelTSlab", "DelTSlab", 1000, -20000, 20000); // ns
-  TH1F *histQ0       = new TH1F("Q0", "Q0", 4096, 0, 16384);                   // ns
-  TH1F *histQ1       = new TH1F("Q1", "Q1", 4096, 0, 16384);                   // ns
-  TH1F *histQ2       = new TH1F("Q2", "Q2", 4096, 0, 16384);                   // ns
-  TH1F *histQ3       = new TH1F("Q3", "Q3", 4096, 0, 16384);                   // ns
+  TH1F *histQ0       = new TH1F("Q0", "Q0", 4096, 0, 16384);                  // ns
+  TH1F *histQ1       = new TH1F("Q1", "Q1", 4096, 0, 16384);                  // ns
+  TH1F *histQ2       = new TH1F("Q2", "Q2", 4096, 0, 16384);                  // ns
+  TH1F *histQ3       = new TH1F("Q3", "Q3", 4096, 0, 16384);                  // ns
 
-  TH1F *histRatio_0_1 = new TH1F("Ratio_0_1","Ratio_0_1",100,0,5);
-  TH1F *histRatio_0_2 = new TH1F("Ratio_0_2","Ratio_0_2",100,0,5);
-  TH1F *histRatio_0_3 = new TH1F("Ratio_0_3","Ratio_0_3",100,0,5);
-  TH1F *histRatio_1_2 = new TH1F("Ratio_1_2","Ratio_1_2",100,0,5);
-  TH1F *histRatio_1_3 = new TH1F("Ratio_1_3","Ratio_1_3",100,0,5);
-  TH1F *histRatio_2_3 = new TH1F("Ratio_2_3","Ratio_2_3",100,0,5);
+  TH1F *histRatio_0_1 = new TH1F("Ratio_0_1", "Ratio_0_1", 100, 0, 5);
+  TH1F *histRatio_0_2 = new TH1F("Ratio_0_2", "Ratio_0_2", 100, 0, 5);
+  TH1F *histRatio_0_3 = new TH1F("Ratio_0_3", "Ratio_0_3", 100, 0, 5);
+  TH1F *histRatio_1_2 = new TH1F("Ratio_1_2", "Ratio_1_2", 100, 0, 5);
+  TH1F *histRatio_1_3 = new TH1F("Ratio_1_3", "Ratio_1_3", 100, 0, 5);
+  TH1F *histRatio_2_3 = new TH1F("Ratio_2_3", "Ratio_2_3", 100, 0, 5);
   // std::cout << "**************************************" << std::endl;
 
-  TH1F *histDelT_0_1 = new TH1F("DelT_0_1","DelT_0_1",100,-20000,20000);
-  TH1F *histDelT_0_2 = new TH1F("DelT_0_2","DelT_0_2",100,-20000,20000);
-  TH1F *histDelT_0_3 = new TH1F("DelT_0_3","DelT_0_3",100,-20000,20000);
-  TH1F *histDelT_1_2 = new TH1F("DelT_1_2","DelT_1_2",100,-20000,20000);
-  TH1F *histDelT_1_3 = new TH1F("DelT_1_3","DelT_1_3",100,-20000,20000);
-  TH1F *histDelT_2_3 = new TH1F("DelT_2_3","DelT_2_3",100,-20000,20000);
+  TH1F *histDelT_0_1 = new TH1F("DelT_0_1", "DelT_0_1", 100, -20000, 20000);
+  TH1F *histDelT_0_2 = new TH1F("DelT_0_2", "DelT_0_2", 100, -20000, 20000);
+  TH1F *histDelT_0_3 = new TH1F("DelT_0_3", "DelT_0_3", 100, -20000, 20000);
+  TH1F *histDelT_1_2 = new TH1F("DelT_1_2", "DelT_1_2", 100, -20000, 20000);
+  TH1F *histDelT_1_3 = new TH1F("DelT_1_3", "DelT_1_3", 100, -20000, 20000);
+  TH1F *histDelT_2_3 = new TH1F("DelT_2_3", "DelT_2_3", 100, -20000, 20000);
 
   std::sort(vecOfHits.begin(), vecOfHits.end(), SortHits);
 
@@ -122,11 +121,14 @@ int main(int argc, char *argv[])
       // std::cout << "Inserting the event : Size : " << vec.size() << std::endl;
       std::vector<UShort_t> vecChannels;
 
-      for (unsigned int v = 0; v < vec.size(); v++) {
-        vecChannels.push_back(vec[v]->Channel);
+      {
+	//This block is just to fill histogram of size of vec
+        for (unsigned int v = 0; v < vec.size(); v++) {
+          vecChannels.push_back(vec[v]->Channel);
+        }
+        std::set<UShort_t> s(vecChannels.begin(), vecChannels.end());
+        if (s.size() == vecChannels.size()) histSize->Fill(vecChannels.size());
       }
-      std::set<UShort_t> s(vecChannels.begin(), vecChannels.end());
-      if (s.size() == vecChannels.size()) histSize->Fill(vecChannels.size());
 
       vecOfVecOfHits.push_back(vec);
       start = vecOfHits[i]->Timestamp;
@@ -227,27 +229,26 @@ int main(int argc, char *argv[])
         histQ2->Fill(q2);
         histQ3->Fill(q3);
 
-	histRatio_0_1->Fill(1.*q0/q1);
-	histRatio_0_2->Fill(1.*q0/q2);
-	histRatio_0_3->Fill(1.*q0/q3);
-	histRatio_1_2->Fill(1.*q1/q2);
-	histRatio_1_3->Fill(1.*q1/q3);
-	histRatio_2_3->Fill(1.*q2/q3);
+        histRatio_0_1->Fill(1. * q0 / q1);
+        histRatio_0_2->Fill(1. * q0 / q2);
+        histRatio_0_3->Fill(1. * q0 / q3);
+        histRatio_1_2->Fill(1. * q1 / q2);
+        histRatio_1_3->Fill(1. * q1 / q3);
+        histRatio_2_3->Fill(1. * q2 / q3);
 
-	Long64_t diff = 0;
-	diff = tm0-tm1;
+        Long64_t diff = 0;
+        diff          = tm0 - tm1;
         histDelT_0_1->Fill(diff);
-	diff = tm0-tm2;
-	histDelT_0_2->Fill(diff);
-	diff = tm0-tm3;
-	histDelT_0_3->Fill(diff);
-	diff = tm1-tm2;
-	histDelT_1_2->Fill(diff);
-	diff = tm1-tm3;
-	histDelT_1_3->Fill(diff);
-	diff = tm2-tm3;
-	histDelT_2_3->Fill(diff);
-
+        diff = tm0 - tm2;
+        histDelT_0_2->Fill(diff);
+        diff = tm0 - tm3;
+        histDelT_0_3->Fill(diff);
+        diff = tm1 - tm2;
+        histDelT_1_2->Fill(diff);
+        diff = tm1 - tm3;
+        histDelT_1_3->Fill(diff);
+        diff = tm2 - tm3;
+        histDelT_2_3->Fill(diff);
       }
     }
   }
@@ -267,13 +268,13 @@ int main(int argc, char *argv[])
   histQ2->SetTitle("PMT_2");
   histQ3->SetTitle("PMT_3");
 
-  //outputFile->cd();
-  //histQ0->Write();
-  //histQ1->Write();
-  //histQ2->Write();
-  //histQ3->Write();
+  // outputFile->cd();
+  // histQ0->Write();
+  // histQ1->Write();
+  // histQ2->Write();
+  // histQ3->Write();
 
-  //outputFile->Close();
+  // outputFile->Close();
 
   TCanvas *chargeCanvas = new TCanvas("Charge_Q0_Q1_Q2_Q3", "Charge_Q0_Q1_Q2_Q3");
   histQ0->Draw("hist");
@@ -291,7 +292,7 @@ int main(int argc, char *argv[])
   new TCanvas;
   histQMean->Draw();
 
-  TCanvas *ratioCan = new TCanvas("ChargeRatio","ChargeRatio");
+  TCanvas *ratioCan = new TCanvas("ChargeRatio", "ChargeRatio");
 
   histRatio_0_1->SetLineWidth(2);
   histRatio_0_2->SetLineWidth(2);
@@ -320,10 +321,10 @@ int main(int argc, char *argv[])
   histRatio_1_2->Draw("histsames");
   histRatio_1_3->Draw("histsames");
   histRatio_2_3->Draw("histsames");
- 
+
   ratioCan->BuildLegend();
 
-  TCanvas *delTCan = new TCanvas("DhargeRatio","DhargeRatio");
+  TCanvas *delTCan = new TCanvas("DhargeRatio", "DhargeRatio");
   histDelT_0_1->SetLineWidth(2);
   histDelT_0_2->SetLineWidth(2);
   histDelT_0_3->SetLineWidth(2);
@@ -345,17 +346,17 @@ int main(int argc, char *argv[])
   histDelT_1_3->SetTitle("T13");
   histDelT_2_3->SetTitle("T23");
 
-  //histDelT_0_1->Draw("hist");
-  histDelT_0_2->Draw("hist");//"sames");
-  //histDelT_0_3->Draw("histsames");
-  //histDelT_1_2->Draw("histsames");
+  // histDelT_0_1->Draw("hist");
+  histDelT_0_2->Draw("hist"); //"sames");
+  // histDelT_0_3->Draw("histsames");
+  // histDelT_1_2->Draw("histsames");
   histDelT_1_3->Draw("histsames");
-  //histDelT_2_3->Draw("histsames");
- 
-  delTCan->BuildLegend();
-  //ULong64_t integral = histQMean->Integral(histQMean->FindBin(500), histQMean->FindBin(4000));
+  // histDelT_2_3->Draw("histsames");
 
-  //std::cout << "Integral : " << integral << std::endl;
+  delTCan->BuildLegend();
+  // ULong64_t integral = histQMean->Integral(histQMean->FindBin(500), histQMean->FindBin(4000));
+
+  // std::cout << "Integral : " << integral << std::endl;
 
   //  return 0;
 
@@ -365,6 +366,6 @@ int main(int argc, char *argv[])
     histQMean->Draw();
 
    */
-  //outputFile->Close();
+  // outputFile->Close();
   fApp->Run();
 }

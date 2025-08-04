@@ -24,3 +24,9 @@ target_link_libraries(compare ${ROOT_LIBRARIES})
 
 add_executable(subtract subtract.cpp)
 target_link_libraries(subtract ${ROOT_LIBRARIES})
+
+add_executable(TestSet TestSet.cpp Helpers.cpp)
+target_link_libraries(TestSet ${ROOT_LIBRARIES})
+
+add_executable(ProcessData ProcessData.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(ProcessData ${ROOT_LIBRARIES})

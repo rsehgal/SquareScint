@@ -12,6 +12,8 @@
     return a->Timestamp < b->Timestamp; // Ascending order
 }*/
 
+
+
 class Hit {
 public:
   UShort_t Channel;
@@ -23,28 +25,39 @@ public:
 
 public:
   Hit() {}
+  Hit(UShort_t channel):Channel(channel),Timestamp(0),Board(0),Energy(0),EnergyShort(0),Flags(0){}
 
   Hit(UShort_t channel, ULong64_t timestamp, UShort_t board, UShort_t energy, UShort_t energyShort, UInt_t flags)
       : Channel(channel), Timestamp(timestamp), Board(board), Energy(energy), EnergyShort(energyShort), Flags(flags)
 
   {
- }
+  }
 
-  void Set(UShort_t channel, ULong64_t timestamp, UShort_t board, UShort_t energy, UShort_t energyShort, UInt_t flags){
-       Channel = channel;
-       Timestamp = timestamp;
-       Board = board;
-       Energy = energy;
-       EnergyShort = energyShort;
-       Flags=flags;
-}
+  void Set(UShort_t channel, ULong64_t timestamp, UShort_t board, UShort_t energy, UShort_t energyShort, UInt_t flags)
+  {
+    Channel     = channel;
+    Timestamp   = timestamp;
+    Board       = board;
+    Energy      = energy;
+    EnergyShort = energyShort;
+    Flags       = flags;
+  }
 
   void Print()
   {
-    //std::cout << "=====================================================" << std::endl;
+    // std::cout << "=====================================================" << std::endl;
     std::cout << Channel << "\t" << Timestamp << "\t" << Board << "\t" << Energy << "\t" << EnergyShort << "\t" << Flags
               << std::endl;
   }
+
+  bool operator<(const Hit *other) const { return Channel < other->Channel; }
+
+}
+;
+struct HitPtrCompare {
+    bool operator()(const Hit* a, const Hit* b) const {
+        return a->Channel < b->Channel;  // or use full comparison with std::tie
+    }
 };
 
 #endif
