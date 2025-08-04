@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
   TH2F *h_dt_q    = new TH2F("h_dt_q", "DeltaT vs Q1; Q1; T1 - T0 (ns)", 1000, 0, 1000, 500, -50, 50);
 
   TH1F *histDelTSlab = new TH1F("DelTSlab", "DelTSlab", 1000, -20000, 20000); // ns
-  TH1F *histQ0       = new TH1F("Q0", "Q0", 512, 0, 8192);                   // ns
-  TH1F *histQ1       = new TH1F("Q1", "Q1", 512, 0, 8192);                   // ns
-  TH1F *histQ2       = new TH1F("Q2", "Q2", 512, 0, 8192);                   // ns
-  TH1F *histQ3       = new TH1F("Q3", "Q3", 512, 0, 8192);                   // ns
+  TH1F *histQ0       = new TH1F("Q0", "Q0", 4096, 0, 16384);                   // ns
+  TH1F *histQ1       = new TH1F("Q1", "Q1", 4096, 0, 16384);                   // ns
+  TH1F *histQ2       = new TH1F("Q2", "Q2", 4096, 0, 16384);                   // ns
+  TH1F *histQ3       = new TH1F("Q3", "Q3", 4096, 0, 16384);                   // ns
 
   TH1F *histRatio_0_1 = new TH1F("Ratio_0_1","Ratio_0_1",100,0,5);
   TH1F *histRatio_0_2 = new TH1F("Ratio_0_2","Ratio_0_2",100,0,5);

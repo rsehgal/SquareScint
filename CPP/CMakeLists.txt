@@ -17,9 +17,10 @@ include_directories(..)
 # Add executable
 #add_executable(${PROJECT_NAME} ${SOURCES} NaI.cpp)
 add_executable(main main.cpp)
-
-# Link with Geant4 libraries
 target_link_libraries(main ${ROOT_LIBRARIES})
 
 add_executable(compare compare.cpp)
 target_link_libraries(compare ${ROOT_LIBRARIES})
+
+add_executable(subtract subtract.cpp)
+target_link_libraries(subtract ${ROOT_LIBRARIES})
