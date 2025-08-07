@@ -30,3 +30,6 @@ target_link_libraries(TestSet ${ROOT_LIBRARIES})
 
 add_executable(ProcessData ProcessData.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(ProcessData ${ROOT_LIBRARIES})
+
+add_executable(ProcessData2 ProcessData2.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(ProcessData2 ${ROOT_LIBRARIES})

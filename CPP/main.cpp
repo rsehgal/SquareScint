@@ -91,12 +91,12 @@ int main(int argc, char *argv[])
   TH1F *histRatio_2_3 = new TH1F("Ratio_2_3", "Ratio_2_3", 100, 0, 5);
   // std::cout << "**************************************" << std::endl;
 
-  TH1F *histDelT_0_1 = new TH1F("DelT_0_1", "DelT_0_1", 100, -20000, 20000);
-  TH1F *histDelT_0_2 = new TH1F("DelT_0_2", "DelT_0_2", 100, -20000, 20000);
-  TH1F *histDelT_0_3 = new TH1F("DelT_0_3", "DelT_0_3", 100, -20000, 20000);
-  TH1F *histDelT_1_2 = new TH1F("DelT_1_2", "DelT_1_2", 100, -20000, 20000);
-  TH1F *histDelT_1_3 = new TH1F("DelT_1_3", "DelT_1_3", 100, -20000, 20000);
-  TH1F *histDelT_2_3 = new TH1F("DelT_2_3", "DelT_2_3", 100, -20000, 20000);
+  TH1F *histDelT_0_1 = new TH1F("DelT_0_1", "DelT_0_1", 200, -20000, 20000);
+  TH1F *histDelT_0_2 = new TH1F("DelT_0_2", "DelT_0_2", 200, -20000, 20000);
+  TH1F *histDelT_0_3 = new TH1F("DelT_0_3", "DelT_0_3", 200, -20000, 20000);
+  TH1F *histDelT_1_2 = new TH1F("DelT_1_2", "DelT_1_2", 200, -20000, 20000);
+  TH1F *histDelT_1_3 = new TH1F("DelT_1_3", "DelT_1_3", 200, -20000, 20000);
+  TH1F *histDelT_2_3 = new TH1F("DelT_2_3", "DelT_2_3", 200, -20000, 20000);
 
   std::sort(vecOfHits.begin(), vecOfHits.end(), SortHits);
 
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 
   // outputFile->Close();
 
-  TCanvas *chargeCanvas = new TCanvas("Charge_Q0_Q1_Q2_Q3", "Charge_Q0_Q1_Q2_Q3");
+  /*TCanvas *chargeCanvas = new TCanvas("Charge_Q0_Q1_Q2_Q3", "Charge_Q0_Q1_Q2_Q3");
   histQ0->Draw("hist");
   histQ1->Draw("histsames");
   histQ2->Draw("histsames");
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
   histQMean->Draw();
 
   TCanvas *ratioCan = new TCanvas("ChargeRatio", "ChargeRatio");
-
+*/
   histRatio_0_1->SetLineWidth(2);
   histRatio_0_2->SetLineWidth(2);
   histRatio_0_3->SetLineWidth(2);
@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
   histRatio_1_3->SetTitle("C13");
   histRatio_2_3->SetTitle("C23");
 
-  histRatio_0_1->Draw("hist");
+  /*histRatio_0_1->Draw("hist");
   histRatio_0_2->Draw("histsames");
   histRatio_0_3->Draw("histsames");
   histRatio_1_2->Draw("histsames");
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
   histRatio_2_3->Draw("histsames");
 
   ratioCan->BuildLegend();
-
+*/
   TCanvas *delTCan = new TCanvas("DhargeRatio", "DhargeRatio");
   histDelT_0_1->SetLineWidth(2);
   histDelT_0_2->SetLineWidth(2);

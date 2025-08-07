@@ -36,6 +36,14 @@ int main(int argc, char *argv[])
   UShort_t q3=0;
   UShort_t q4=0;
   UShort_t q5=0;
+
+  ULong64_t t0=0;
+  ULong64_t t1=0;
+  ULong64_t t2=0;
+  ULong64_t t3=0;
+  ULong64_t t4=0;
+  ULong64_t t5=0;
+
   treeML->Branch("qVec",&qVec);
   treeML->Branch("q0",&q0);
   treeML->Branch("q1",&q1);
@@ -43,6 +51,14 @@ int main(int argc, char *argv[])
   treeML->Branch("q3",&q3);
   treeML->Branch("q4",&q4);
   treeML->Branch("q5",&q5);
+
+  treeML->Branch("t0",&t0);
+  treeML->Branch("t1",&t1);
+  treeML->Branch("t2",&t2);
+  treeML->Branch("t3",&t3);
+  treeML->Branch("t4",&t4);
+  treeML->Branch("t5",&t5);
+ 
   
   // Declaration of leaves types
   UShort_t Channel;
@@ -146,11 +162,16 @@ int main(int argc, char *argv[])
   for (unsigned int i = 0; i < vecOfVecOfHits.size(); i++) {
     HitSet hs = VecOfHitsToHitSet(vecOfVecOfHits[i]);
 
+std::cout <<"========= " << i  << " ===========" << std::endl;
+    
+      for (const auto &hit : hs) {
+	hit->Print();
+	}
     //if (EqualSets(hs, slabWithTopAndBottomBar)) {
     qVec.clear();
     if (EqualSets(hs, slabWithTopBar)) {
     //if (EqualSets(hs, slab)) {
-      // std::cout << "======================================" << std::endl;
+      std::cout << "======================================" << std::endl;
 	qVec.resize(6);
       for (const auto &hit : hs) {
         // hit->Print();
@@ -158,12 +179,12 @@ int main(int argc, char *argv[])
         vecOfHist[hit->Channel]->Fill(hit->Energy);
 	qVec[hit->Channel]=hit->Energy;
 
-	if(hit->Channel==0) q0=hit->Energy;
-	if(hit->Channel==1) q1=hit->Energy;
-	if(hit->Channel==2) q2=hit->Energy;
-	if(hit->Channel==3) q3=hit->Energy;
-	if(hit->Channel==4) q4=hit->Energy;
-	if(hit->Channel==5) q5=hit->Energy;
+	if(hit->Channel==0){q0=hit->Energy; t0=hit->Timestamp;}  
+	if(hit->Channel==1){q1=hit->Energy; t1=hit->Timestamp;}
+	if(hit->Channel==2){q2=hit->Energy; t2=hit->Timestamp;}
+	if(hit->Channel==3){q3=hit->Energy; t3=hit->Timestamp;}
+	if(hit->Channel==4){q4=hit->Energy; t4=hit->Timestamp;}
+	if(hit->Channel==5){q5=hit->Energy; t5=hit->Timestamp;}
       }
 }
 	treeML->Fill();
@@ -177,7 +198,7 @@ int main(int argc, char *argv[])
 
   std::cout << "All Done...................." << std::endl;
 
-  ULong64_t maxHEnties = 0;
+/*  ULong64_t maxHEnties = 0;
   short index          = -10;
   short i              = 0;
   for (const auto &hist : vecOfHist) {
@@ -197,7 +218,7 @@ int main(int argc, char *argv[])
     }
     i++;
   }
-
+*/
   new TCanvas("TopBar","TopBar");
   vecOfHist[4]->Draw("hist");
   vecOfHist[5]->Draw("histsames");
