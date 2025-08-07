@@ -36,6 +36,9 @@ int main(int argc, char *argv[])
   UShort_t q3=0;
   UShort_t q4=0;
   UShort_t q5=0;
+  UShort_t q6=0;
+  UShort_t q7=0;
+
 
   ULong64_t t0=0;
   ULong64_t t1=0;
@@ -43,6 +46,9 @@ int main(int argc, char *argv[])
   ULong64_t t3=0;
   ULong64_t t4=0;
   ULong64_t t5=0;
+  ULong64_t t6=0;
+  ULong64_t t7=0;
+
 
   treeML->Branch("qVec",&qVec);
   treeML->Branch("q0",&q0);
@@ -51,6 +57,9 @@ int main(int argc, char *argv[])
   treeML->Branch("q3",&q3);
   treeML->Branch("q4",&q4);
   treeML->Branch("q5",&q5);
+  treeML->Branch("q6",&q6);
+  treeML->Branch("q7",&q7);
+
 
   treeML->Branch("t0",&t0);
   treeML->Branch("t1",&t1);
@@ -58,6 +67,8 @@ int main(int argc, char *argv[])
   treeML->Branch("t3",&t3);
   treeML->Branch("t4",&t4);
   treeML->Branch("t5",&t5);
+  treeML->Branch("t6",&t6);
+  treeML->Branch("t7",&t7);
  
   
   // Declaration of leaves types
@@ -122,10 +133,11 @@ int main(int argc, char *argv[])
 
     // std::vector<std::shared_ptr<Hit>> vec;
     ULong64_t ts = vecOfHits[i]->Timestamp;
-    if ((ts - start) < 18000)
+    if ((ts - start) < 24000)
       vec.push_back(vecOfHits[i]);
     else {
       // std::cout << "Inserting the event : Size : " << vec.size() << std::endl;
+      /*
       std::vector<UShort_t> vecChannels;
 
       {
@@ -136,6 +148,7 @@ int main(int argc, char *argv[])
         std::set<UShort_t> s(vecChannels.begin(), vecChannels.end());
         if (s.size() == vecChannels.size()) histSize->Fill(vecChannels.size());
       }
+      */
 
       vecOfVecOfHits.push_back(vec);
       start = vecOfHits[i]->Timestamp;
@@ -147,6 +160,16 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "Size of vecOfVecOfHits.size : " << vecOfVecOfHits.size() << std::endl;
+
+  /*
+  for(const auto& vec : vecOfVecOfHits){
+	  if (vec.size()==8){
+		  std::cout << "Correct event found....." <<std::endl;
+	  }
+  }
+  */
+
+  //return 0;
 
   histQ0->SetLineColor(1);
   histQ1->SetLineColor(2);
@@ -162,20 +185,22 @@ int main(int argc, char *argv[])
   for (unsigned int i = 0; i < vecOfVecOfHits.size(); i++) {
     HitSet hs = VecOfHitsToHitSet(vecOfVecOfHits[i]);
 
-std::cout <<"========= " << i  << " ===========" << std::endl;
+    /*
+    std::cout <<"========= " << i  << " ===========" << std::endl;
+    for (const auto &hit : hs) {
+     hit->Print();
+    }
+    */
     
-      for (const auto &hit : hs) {
-	hit->Print();
-	}
     //if (EqualSets(hs, slabWithTopAndBottomBar)) {
     qVec.clear();
-    if (EqualSets(hs, slabWithTopBar)) {
+    if (EqualSets(hs, slabWithTopAndBottomBar)) {
     //if (EqualSets(hs, slab)) {
-      std::cout << "======================================" << std::endl;
-	qVec.resize(6);
+    //  std::cout << "======================================" << std::endl;
+	qVec.resize(8);
       for (const auto &hit : hs) {
         // hit->Print();
-	if(hit->Channel < 6){
+	if(hit->Channel < 8){
         vecOfHist[hit->Channel]->Fill(hit->Energy);
 	qVec[hit->Channel]=hit->Energy;
 
@@ -185,6 +210,9 @@ std::cout <<"========= " << i  << " ===========" << std::endl;
 	if(hit->Channel==3){q3=hit->Energy; t3=hit->Timestamp;}
 	if(hit->Channel==4){q4=hit->Energy; t4=hit->Timestamp;}
 	if(hit->Channel==5){q5=hit->Energy; t5=hit->Timestamp;}
+	if(hit->Channel==6){q6=hit->Energy; t6=hit->Timestamp;}
+	if(hit->Channel==7){q7=hit->Energy; t7=hit->Timestamp;}
+
       }
 }
 	treeML->Fill();

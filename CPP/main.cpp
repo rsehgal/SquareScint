@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
     // std::vector<std::shared_ptr<Hit>> vec;
     ULong64_t ts = vecOfHits[i]->Timestamp;
-    if ((ts - start) < 20000)
+    if ((ts - start) < 24000)
       vec.push_back(vecOfHits[i]);
     else {
       // std::cout << "Inserting the event : Size : " << vec.size() << std::endl;
@@ -140,6 +140,14 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "Size of vecOfVecOfHits.size : " << vecOfVecOfHits.size() << std::endl;
+
+for(const auto& vec : vecOfVecOfHits){
+          if (vec.size()==8){
+                  std::cout << "Correct event found....." <<std::endl;
+          }
+  }
+
+return 0;
 
   ULong64_t sizes[4] = {0, 0, 0, 0};
 

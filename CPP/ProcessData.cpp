@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 	qVec.resize(6);
       for (const auto &hit : hs) {
         // hit->Print();
-	if(hit->Channel < 6){
+	if(hit->Channel < 8){
         vecOfHist[hit->Channel]->Fill(hit->Energy);
 	qVec[hit->Channel]=hit->Energy;
 
