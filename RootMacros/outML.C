@@ -1,3 +1,5 @@
+#include <string>
+//void outML(char *filename, char *outfilename, double pos,std::string trName){
 void outML(char *filename, char *outfilename, double pos){
 //////////////////////////////////////////////////////////
 //   This file has been automatically generated 
@@ -11,18 +13,23 @@ void outML(char *filename, char *outfilename, double pos){
 //
 //
 TFile *f = new TFile(filename,"r");
-TTree *treeML = (TTree*)f->Get("treeML");
+char *treeName ="delTTree";//"" "treeML";
+//if(trName!="")
+//treeName = trName.c_string();
+
+//TTree *treeML = (TTree*)f->Get("treeML");
+TTree *treeML = (TTree*)f->Get(treeName);
 
 
 TFile *of = new TFile(outfilename,"RECREATE");
 TTree *mlTree = new TTree("outml","A simple ML Tree");
 
-Long64_t t01 = 0;
-Long64_t t02 = 0;
-Long64_t t03 = 0;
-Long64_t t12 = 0;
-Long64_t t13 = 0;
-Long64_t t23 = 0;
+double t01 = 0;
+double t02 = 0;
+double t03 = 0;
+double t12 = 0;
+double t13 = 0;
+double t23 = 0;
 double p = pos;
 
 mlTree->Branch("t01",&t01);
@@ -43,32 +50,32 @@ mlTree->Branch("pos",&p);
    UShort_t        q5;
    UShort_t        q6;
    UShort_t        q7;
-   ULong64_t       t0;
-   ULong64_t       t1;
-   ULong64_t       t2;
-   ULong64_t       t3;
+   double       t0;
+   double       t1;
+   double       t2;
+   double       t3;
    ULong64_t       t4;
    ULong64_t       t5;
    ULong64_t       t6;
    ULong64_t       t7;
 
    // Set branch addresses.
-   treeML->SetBranchAddress("q0",&q0);
+   /*treeML->SetBranchAddress("q0",&q0);
    treeML->SetBranchAddress("q1",&q1);
    treeML->SetBranchAddress("q2",&q2);
    treeML->SetBranchAddress("q3",&q3);
    treeML->SetBranchAddress("q4",&q4);
    treeML->SetBranchAddress("q5",&q5);
    treeML->SetBranchAddress("q6",&q6);
-   treeML->SetBranchAddress("q7",&q7);
+   treeML->SetBranchAddress("q7",&q7);*/
    treeML->SetBranchAddress("t0",&t0);
    treeML->SetBranchAddress("t1",&t1);
    treeML->SetBranchAddress("t2",&t2);
    treeML->SetBranchAddress("t3",&t3);
-   treeML->SetBranchAddress("t4",&t4);
+   /*treeML->SetBranchAddress("t4",&t4);
    treeML->SetBranchAddress("t5",&t5);
    treeML->SetBranchAddress("t6",&t6);
-   treeML->SetBranchAddress("t7",&t7);
+   treeML->SetBranchAddress("t7",&t7);*/
 
 //     This is the loop skeleton
 //       To read only selected branches, Insert statements like:
