@@ -33,3 +33,10 @@ target_link_libraries(ProcessData ${ROOT_LIBRARIES})
 
 add_executable(ProcessData2 ProcessData2.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(ProcessData2 ${ROOT_LIBRARIES})
+
+add_executable(WaveAnal WaveAnal.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(WaveAnal ${ROOT_LIBRARIES})
+
+add_executable(ProcessDataWave ProcessDataWave.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES})
+

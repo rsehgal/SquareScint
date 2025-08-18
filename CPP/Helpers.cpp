@@ -8,6 +8,7 @@
 
 HitSet slab                    = {new Hit(0), new Hit(1), new Hit(2), new Hit(3)};
 HitSet slabWithTopBar          = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(4), new Hit(5)};
+HitSet slabWithBottomBar          = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(6), new Hit(7)};
 
 HitSet slabWithTopAndBottomBar = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
                                   new Hit(4), new Hit(5), new Hit(6), new Hit(7)};

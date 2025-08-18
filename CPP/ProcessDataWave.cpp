@@ -11,6 +11,8 @@
 #include <set>
 #include "Helpers.h"
 #include "Histograms.h"
+#include <TArrayS.h>
+
 // bool SortHits(const std::shared_ptr<Hit> &a, const std::shared_ptr<Hit> &b)
 bool SortHits(Hit *a, Hit *b)
 {
@@ -49,6 +51,15 @@ int main(int argc, char *argv[])
   ULong64_t t6=0;
   ULong64_t t7=0;
 
+  TArrayS *samples0=nullptr;
+  TArrayS *samples1=nullptr;
+  TArrayS *samples2=nullptr;
+  TArrayS *samples3=nullptr;
+  TArrayS *samples4=nullptr;
+  TArrayS *samples5=nullptr;
+  TArrayS *samples6=nullptr;
+  TArrayS *samples7=nullptr;
+
 
   treeML->Branch("qVec",&qVec);
   treeML->Branch("q0",&q0);
@@ -70,6 +81,14 @@ int main(int argc, char *argv[])
   treeML->Branch("t6",&t6);
   treeML->Branch("t7",&t7);
  
+  treeML->Branch("samples0",&samples0);
+  treeML->Branch("samples1",&samples1);
+  treeML->Branch("samples2",&samples2);
+  treeML->Branch("samples3",&samples3);
+  treeML->Branch("samples4",&samples4);
+  treeML->Branch("samples5",&samples5);
+  treeML->Branch("samples6",&samples6);
+  treeML->Branch("samples7",&samples7);
   
   // Declaration of leaves types
   UShort_t Channel;
@@ -78,6 +97,7 @@ int main(int argc, char *argv[])
   UShort_t Energy;
   UShort_t EnergyShort;
   UInt_t Flags;
+  TArrayS *Samples=nullptr;
 
   // Set branch addresses.
   Data_F->SetBranchAddress("Channel", &Channel);
@@ -86,6 +106,7 @@ int main(int argc, char *argv[])
   Data_F->SetBranchAddress("Energy", &Energy);
   Data_F->SetBranchAddress("EnergyShort", &EnergyShort);
   Data_F->SetBranchAddress("Flags", &Flags);
+  Data_F->SetBranchAddress("Samples",&Samples);
 
   //     This is the loop skeleton
   //       To read only selected branches, Insert statements like:
@@ -97,7 +118,7 @@ int main(int argc, char *argv[])
   std::cout << "============Actual number of Entries : " << nentries << " ================" << std::endl;
   Long64_t nbytes = 0;
 
-  Hit h;
+  //Hit h;
 
   // std::vector<std::shared_ptr<Hit>> vecOfHits;
   std::vector<Hit *> vecOfHits;
@@ -109,10 +130,10 @@ int main(int argc, char *argv[])
     if (!(i % printProgress)) std::cout << "Read " << i << " events...." << std::endl;
 
     nbytes += Data_F->GetEntry(i);
-    h.Set(Channel, Timestamp, Board, Energy, EnergyShort, Flags);
+    //h.Set(Channel, Timestamp, Board, Energy, EnergyShort, Flags,Samples);
     // h.Print();
     // vecOfHits.push_back(std::make_shared<Hit>(Channel, Timestamp, Board, Energy, EnergyShort, Flags));
-    vecOfHits.push_back(new Hit(Channel, Timestamp, Board, Energy, EnergyShort, Flags));
+    vecOfHits.push_back(new Hit(Channel, Timestamp, Board, Energy, EnergyShort, Flags,Samples));
     // vecOfHits[i]->Print();
   }
 
@@ -185,12 +206,12 @@ int main(int argc, char *argv[])
   for (unsigned int i = 0; i < vecOfVecOfHits.size(); i++) {
     HitSet hs = VecOfHitsToHitSet(vecOfVecOfHits[i]);
 
-    /*
-    std::cout <<"========= " << i  << " ===========" << std::endl;
+    
+    /*std::cout <<"========= " << i  << " ===========" << std::endl;
     for (const auto &hit : hs) {
      hit->Print();
-    }
-    */
+    }*/
+    
     
     //if (EqualSets(hs, slabWithTopAndBottomBar)) {
     qVec.clear();
@@ -206,14 +227,14 @@ int main(int argc, char *argv[])
         vecOfHist[hit->Channel]->Fill(hit->Energy);
 	qVec[hit->Channel]=hit->Energy;
 
-	if(hit->Channel==0){q0=hit->Energy; t0=hit->Timestamp;}  
-	if(hit->Channel==1){q1=hit->Energy; t1=hit->Timestamp;}
-	if(hit->Channel==2){q2=hit->Energy; t2=hit->Timestamp;}
-	if(hit->Channel==3){q3=hit->Energy; t3=hit->Timestamp;}
-	if(hit->Channel==4){q4=hit->Energy; t4=hit->Timestamp;}
-	if(hit->Channel==5){q5=hit->Energy; t5=hit->Timestamp;}
-	if(hit->Channel==6){q6=hit->Energy; t6=hit->Timestamp;}
-	if(hit->Channel==7){q7=hit->Energy; t7=hit->Timestamp;}
+	if(hit->Channel==0){q0=hit->Energy; t0=hit->Timestamp; samples0=hit->Samples;}  
+	if(hit->Channel==1){q1=hit->Energy; t1=hit->Timestamp; samples1=hit->Samples;}
+	if(hit->Channel==2){q2=hit->Energy; t2=hit->Timestamp; samples2=hit->Samples;}
+	if(hit->Channel==3){q3=hit->Energy; t3=hit->Timestamp; samples3=hit->Samples;}
+	if(hit->Channel==4){q4=hit->Energy; t4=hit->Timestamp; samples4=hit->Samples;}
+	if(hit->Channel==5){q5=hit->Energy; t5=hit->Timestamp; samples5=hit->Samples;}
+	if(hit->Channel==6){q6=hit->Energy; t6=hit->Timestamp; samples6=hit->Samples;}
+	if(hit->Channel==7){q7=hit->Energy; t7=hit->Timestamp; samples7=hit->Samples;}
 
       }
 }
