@@ -1,6 +1,6 @@
 void gr(){
-	std::vector<float> yvec={-20.,-10.,10.,20.};
-	std::vector<float> xvec={-2686.,-2080.,1564.,2285.};
+	std::vector<float> yvec={20.,  15.,  10., 5.,  0.,  -5., -10.,-15.,-20.};
+	std::vector<float> xvec={2.43,2.058,1.54,0.61,-0.28,-1.127,  -2.12,-2.48, -3.14};
 	TGraph *g = new TGraph(xvec.size(),&xvec[0],&yvec[0]);
 	g->SetMarkerStyle(4);
 	g->Draw("ap");

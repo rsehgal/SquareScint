@@ -29,10 +29,16 @@ void outMLExp(char *filename, char *outfilename, double posx, double posy)
   double t12 = 0;
   double t13 = 0;
   double t23 = 0;
+  double t45 = 0;
+  double t67 = 0;
   UShort_t Q0;
   UShort_t Q1;
   UShort_t Q2;
   UShort_t Q3;
+  UShort_t Q4;
+  UShort_t Q5;
+  UShort_t Q6;
+  UShort_t Q7;
   Short_t x = posx;
   Short_t y = posy;
 
@@ -44,10 +50,16 @@ void outMLExp(char *filename, char *outfilename, double posx, double posy)
   mlTree->Branch("t12", &t12);
   mlTree->Branch("t13", &t13);
   mlTree->Branch("t23", &t23);
+  mlTree->Branch("t45", &t45);
+  mlTree->Branch("t67", &t67);
   mlTree->Branch("q0", &Q0);
   mlTree->Branch("q1", &Q1);
   mlTree->Branch("q2", &Q2);
   mlTree->Branch("q3", &Q3);
+  mlTree->Branch("q4", &Q4);
+  mlTree->Branch("q5", &Q5);
+  mlTree->Branch("q6", &Q6);
+  mlTree->Branch("q7", &Q7);
   mlTree->Branch("x", &x);
   mlTree->Branch("y", &y);
 
@@ -71,24 +83,29 @@ void outMLExp(char *filename, char *outfilename, double posx, double posy)
   ULong64_t t7;
 
   // Set branch addresses.
-  /*treeML->SetBranchAddress("q0",&q0);
+  treeML->SetBranchAddress("q0",&q0);
   treeML->SetBranchAddress("q1",&q1);
   treeML->SetBranchAddress("q2",&q2);
   treeML->SetBranchAddress("q3",&q3);
   treeML->SetBranchAddress("q4",&q4);
   treeML->SetBranchAddress("q5",&q5);
   treeML->SetBranchAddress("q6",&q6);
-  treeML->SetBranchAddress("q7",&q7);*/
+  treeML->SetBranchAddress("q7",&q7);
   treeML->SetBranchAddress("t0", &t0);
   treeML->SetBranchAddress("t1", &t1);
   treeML->SetBranchAddress("t2", &t2);
   treeML->SetBranchAddress("t3", &t3);
+  treeML->SetBranchAddress("t4", &t4);
+  treeML->SetBranchAddress("t5", &t5);
+  treeML->SetBranchAddress("t6", &t6);
+  treeML->SetBranchAddress("t7", &t7);
 
+/*
   treeML->SetBranchAddress("q0", &q0);
   treeML->SetBranchAddress("q1", &q1);
   treeML->SetBranchAddress("q2", &q2);
   treeML->SetBranchAddress("q3", &q3);
-
+*/
   /*treeML->SetBranchAddress("t4",&t4);
   treeML->SetBranchAddress("t5",&t5);
   treeML->SetBranchAddress("t6",&t6);
@@ -110,11 +127,17 @@ void outMLExp(char *filename, char *outfilename, double posx, double posy)
     t12 = ((double)t1 - (double)t2) / 1000.;
     t13 = ((double)t1 - (double)t3) / 1000.;
     t23 = ((double)t2 - (double)t3) / 1000.;
+    t45 = ((double)t4 - (double)t5) / 1000.;
+    t67 = ((double)t6 - (double)t7) / 1000.;
 
     Q0 = q0;
     Q1 = q1;
     Q2 = q2;
     Q3 = q3;
+    Q4 = q4;
+    Q5 = q5;
+    Q6 = q6;
+    Q7 = q7;
 
     mlTree->Fill();
   }
