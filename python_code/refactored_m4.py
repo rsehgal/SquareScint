@@ -8,13 +8,42 @@ matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from collections import Counter
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm 
 
+# ----------------- CONFIG VIA INPUT -----------------
+available_setups = ["square_slab", "1st_bar", "2nd_bar"]
 
+# ------------------------------------------
+def gaussian(x, A, mu, sigma):
+    return A * np.exp(-(x - mu) ** 2 / (2 * sigma ** 2))
 
-# Load ROOT file
-def ProcessData(filename,allowed_channels):
-    
-    root_files = []  # initialize here
+def plot_2d_gaussian_surface(coords, A, x0, y0, sigma_x, sigma_y, theta):
+    x, y = coords
+    a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (2 * sigma_y ** 2)
+    b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(2 * theta)) / (4 * sigma_y ** 2)
+    c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (2 * sigma_y ** 2)
+    return A * np.exp(-(a*(x - x0)**2 + 2*b*(x - x0)*(y - y0) + c*(y - y0)**2))
+
+# Mapping of detector setups to channels
+detector_configurations = {
+    "square_slab": [0, 1, 2, 3],
+    "1st_bar": [4, 5],
+    "2nd_bar": [6, 7]
+}
+
+def get_channels_from_config(config_list):
+    selected_channels = set()
+    for config in config_list:
+        if config in detector_configurations:
+            selected_channels.update(detector_configurations[config])
+        else:
+            print(f"⚠️ Unknown configuration: {config}")
+    return sorted(selected_channels)
+
+# -------------------- Main Processing Function --------------------
+def ProcessData(filename, allowed_channels):
+    root_files = []
 
     if os.path.isdir(filename):
         root_files = glob.glob(os.path.join(filename, "*.root"))
@@ -23,26 +52,21 @@ def ProcessData(filename,allowed_channels):
         print(f"📁 Directory detected. Using file: {root_files[0]}")
         filename = root_files[0]
 
+    print("===========================================================")
+    print("ALLOWED CHANNELS : ", allowed_channels)
+    print("===========================================================")
 
-    file_ext = os.path.splitext(filename)[-1].lower()
-    print("===========================================================")
-    print("ALLOWED CHANNELS : ",allowed_channels)
-    print("===========================================================")
-    #file = uproot.open("/home/harshita/shared/07_Aug_Na22/DataF_Na22_CFD_th_8_8_9_9_Slab_7Aug_0_0.root")
     file = uproot.open(filename)
     print(file.keys())
 
     tree = file["Data_F"]
     print("Total entries:", tree.num_entries)
 
-    # Load selected columns
     data = tree.arrays(["Timestamp", "Channel", "Energy"], library="pd")
     data = data[data['Channel'].isin(allowed_channels)]
-
-    # Sort by timestamp
     data_sorted = data.sort_values("Timestamp").reset_index(drop=True)
 
-    # Grouping events
+    # Grouping logic
     grouped_lists = []
     current_group = []
     group_start_time = None
@@ -65,25 +89,23 @@ def ProcessData(filename,allowed_channels):
 
     print(f"\n✅ Valid groups with {required_channel_count} unique channels: {len(grouped_lists)}")
 
-    # Detect channels
+    # Channel detection
     all_channels = sorted(data['Channel'].unique())
     clean_channels = [int(ch) for ch in all_channels]
     log_text = f"\nDetected channels: {clean_channels}"
     print(log_text)
-
     with open("mu3.log", "w") as log_file:
         log_file.write(log_text + "\n")
 
-    # Energy and timestamp storage
+    # Energy and time
     E = {ch: [] for ch in all_channels}
     T = {ch: [] for ch in all_channels}
 
-    for group_idx, group in enumerate(grouped_lists):
+    for group in grouped_lists:
         for item in group:
             E[item.Channel].append(item.Energy)
             T[item.Channel].append(item.Timestamp)
 
-    # Print data count per channel
     print("\nCounts per selected channel:")
     for ch in all_channels:
         print(f"Channel {ch}: {len(E[ch])}")
@@ -93,34 +115,25 @@ def ProcessData(filename,allowed_channels):
     csv_rows = []
     time_rows = []
 
-
     for group in grouped_lists:
         row = {f"Ch_{ch}": np.nan for ch in unique_channels}
         time_row = {f"Time_Ch_{ch}": np.nan for ch in unique_channels}
-        timestamps=[]
         for item in group:
             row[f"Ch_{item.Channel}"] = item.Energy
             time_row[f"Time_Ch_{item.Channel}"] = item.Timestamp
-
-
-
         csv_rows.append(row)
         time_rows.append(time_row)
 
     df_grouped_energy = pd.DataFrame(csv_rows)
     df_time = pd.DataFrame(time_rows)
 
-
     print("df_time columns:", df_time.columns.tolist())
 
-
-    # Sort columns by channel number
+    # Sort columns
     df_grouped_energy = df_grouped_energy[sorted(df_grouped_energy.columns, key=lambda x: int(x.split('_')[1]))]
     df_time = df_time[sorted(df_time.columns, key=lambda x: int(x.split('_')[2]))]
 
-
-
-    # Add ratios and time differences for valid combinations
+    # Add ratios and time differences
     if set([0, 2]).issubset(unique_channels):
         df_grouped_energy['Ratio_0_2'] = df_grouped_energy['Ch_0'] / df_grouped_energy['Ch_2']
         df_grouped_energy['TimeDiff_0_2'] = df_time['Time_Ch_0'] - df_time['Time_Ch_2']
@@ -141,57 +154,64 @@ def ProcessData(filename,allowed_channels):
     df_grouped_energy.replace([np.inf, -np.inf], np.nan, inplace=True)
     df_grouped_energy.dropna(how='any', inplace=True)
 
-       # Print ratios and time diffs if present
+    # Event-by-event comparisons
+    if 'Ch_4' in df_grouped_energy.columns and 'Ch_5' in df_grouped_energy.columns:
+        df_grouped_energy['Min_4_5'] = df_grouped_energy.apply(
+            lambda row: 4 if row['Ch_4'] < row['Ch_5'] else 5,
+            axis=1
+        )
+        print("\n=== Channel with smaller energy (4 vs 5) ===")
+        print(df_grouped_energy['Min_4_5'].value_counts())
+
+    if 'Ch_6' in df_grouped_energy.columns and 'Ch_7' in df_grouped_energy.columns:
+        df_grouped_energy['Min_6_7'] = df_grouped_energy.apply(
+            lambda row: 6 if row['Ch_6'] < row['Ch_7'] else 7,
+            axis=1
+        )
+        print("\n=== Channel with smaller energy (6 vs 7) ===")
+        print(df_grouped_energy['Min_6_7'].value_counts())
+
+    # Fit means
+    y_mean_list = []
+    x_mean_list = []
+
+    def fit_and_get_mu(series):
+        counts, bins = np.histogram(series, bins=60)
+        bin_centers = 0.5 * (bins[:-1] + bins[1:])
+        try:
+            popt, _ = curve_fit(gaussian, bin_centers, counts, p0=[max(counts), series.mean(), series.std()])
+            return popt[1]
+        except Exception as e:
+            print("⚠️ Gaussian fit failed:", e)
+            return np.nan
+
+    if 'TimeDiff_0_2' in df_grouped_energy.columns:
+        mu_0_2 = fit_and_get_mu(df_grouped_energy['TimeDiff_0_2'])
+        y_mean_list.append(mu_0_2)
+
+    if 'TimeDiff_1_3' in df_grouped_energy.columns:
+        mu_1_3 = fit_and_get_mu(df_grouped_energy['TimeDiff_1_3'])
+        x_mean_list.append(mu_1_3)
+
+    # ✅ Calculate Q4 using logs of Q0, Q1, Q2, Q3
+    required_cols = ['Ch_0', 'Ch_1', 'Ch_2', 'Ch_3']
+    if all(col in df_grouped_energy.columns for col in required_cols):
+        with np.errstate(divide='ignore', invalid='ignore'):
+            lnQ0 = np.log(df_grouped_energy['Ch_0'])
+            lnQ1 = np.log(df_grouped_energy['Ch_1'])
+            lnQ2 = np.log(df_grouped_energy['Ch_2'])
+            lnQ3 = np.log(df_grouped_energy['Ch_3'])
+
+            numerator = lnQ0**2 + lnQ2**2 - lnQ1**2 - lnQ3**2
+            denominator = 2 * np.log((df_grouped_energy['Ch_0'] * df_grouped_energy['Ch_2']) / (df_grouped_energy['Ch_1'] * df_grouped_energy['Ch_3']))
+            Q4 = np.exp(numerator / denominator)
+
+            df_grouped_energy['Q4'] = Q4
+
+    # ✅ Print first 5 of each ratio and time diff
     for col in df_grouped_energy.columns:
         if "Ratio" in col or "TimeDiff" in col:
             print(f"\n{col} - first 5 values:")
             print(df_grouped_energy[col].head())
 
-            required_cols = ['Ch_0', 'Ch_1', 'Ch_2', 'Ch_3']
-    if all(col in df_grouped_energy.columns for col in required_cols):
-        lnQ0 = np.log(df_grouped_energy['Ch_0'])
-        lnQ1 = np.log(df_grouped_energy['Ch_1'])
-        lnQ2 = np.log(df_grouped_energy['Ch_2'])
-        lnQ3 = np.log(df_grouped_energy['Ch_3'])
-        
-        numerator = lnQ0**2 + lnQ2**2 - lnQ1**2 - lnQ3**2
-        denominator = 2 * np.log((df_grouped_energy['Ch_0'] * df_grouped_energy['Ch_2']) / (df_grouped_energy['Ch_1'] * df_grouped_energy['Ch_3']))
-
-    with np.errstate(divide='ignore', invalid='ignore'):
-         Q4 = np.exp(numerator / denominator)
-    return E, df_grouped_energy  # Now correctly indented inside the function
-
-
-
-# ----------------- CONFIG VIA INPUT -----------------
-available_setups = ["square_slab", "1st_bar", "2nd_bar"]
-
-
-# ------------------------------------------
-
-def gaussian(x, A, mu, sigma):
-    return A * np.exp(-(x - mu) ** 2 / (2 * sigma ** 2))
-
-
-
-# Mapping of detector setups to channels
-detector_configurations = {
-    "square_slab": [0, 1, 2, 3],
-    "1st_bar": [4, 5],
-    "2nd_bar": [6, 7]
-}
-
-def get_channels_from_config(config_list):
-    selected_channels = set()
-    for config in config_list:
-        if config in detector_configurations:
-            selected_channels.update(detector_configurations[config])
-        else:
-            print(f"⚠️ Unknown configuration: {config}")
-    return sorted(selected_channels)
-
-# Get allowed channels dynamically
-#allowed_channels = get_channels_from_config(selected_setups)
-#print(f"\n✅ Selected setups: {selected_setups}")
-#print(f"✅ Selected channels: {allowed_channels}")
-
+    return E, df_grouped_energy, x_mean_list, y_mean_list
