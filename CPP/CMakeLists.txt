@@ -43,4 +43,8 @@ target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES})
 add_executable(outMLExp outMLExp.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(outMLExp ${ROOT_LIBRARIES})
 
+add_executable(outMLSim outMLSim.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(outMLSim ${ROOT_LIBRARIES})
+
+
 

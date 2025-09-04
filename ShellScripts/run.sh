@@ -1,0 +1,21 @@
+#!/bin/sh
+./NonSegmented muon.mac randomFiring41.root
+./NonSegmented muon.mac randomFiring42.root
+./NonSegmented muon.mac randomFiring43.root
+./NonSegmented muon.mac randomFiring44.root
+./NonSegmented muon.mac randomFiring45.root
+./NonSegmented muon.mac randomFiring46.root
+./NonSegmented muon.mac randomFiring47.root
+./NonSegmented muon.mac randomFiring48.root
+./NonSegmented muon.mac randomFiring49.root
+./NonSegmented muon.mac randomFiring50.root
+./NonSegmented muon.mac randomFiring51.root
+./NonSegmented muon.mac randomFiring52.root
+./NonSegmented muon.mac randomFiring53.root
+./NonSegmented muon.mac randomFiring54.root
+./NonSegmented muon.mac randomFiring55.root
+./NonSegmented muon.mac randomFiring56.root
+./NonSegmented muon.mac randomFiring57.root
+./NonSegmented muon.mac randomFiring58.root
+./NonSegmented muon.mac randomFiring59.root
+./NonSegmented muon.mac randomFiring60.root
