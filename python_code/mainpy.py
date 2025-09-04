@@ -1,7 +1,6 @@
 from refactored_m4 import *
 import matplotlib.pyplot as plt
 import numpy as np
-import glob
 import os
 from scipy.optimize import curve_fit
 
@@ -10,38 +9,26 @@ def gaussian(x, amp, mu, sigma):
     return amp * np.exp(-(x - mu) ** 2 / (2 * sigma ** 2))
 
 # Initialize global lists for means
-x_mean_list = []  # For TimeDiff_1_3 means
+x_mean_list = []  # For TimeDiff_1_3 means (not used here but initialized)
 y_mean_list = []  # For TimeDiff_0_2 means
 
 def run_analysis():
-    parent_directories = [
-        "/home/harshita/shared/SquareScint_Harshita/x0 data file (copy)",
-        "/home/harshita/shared/SquareScint_Harshita/x5 data file",
-        "/home/harshita/shared/SquareScint_Harshita/x10 data file",
-        "/home/harshita/shared/SquareScint_Harshita/x20 data file",
-        "/home/harshita/shared/SquareScint_Harshita/x-10 data file",
-        "/home/harshita/shared/SquareScint_Harshita/x-20 data file",
+    # ✅ Directly specify the .root files (no folder search)
+    file_list = [
+        "/data/WaveAnalysis/Muon_CFD_6_75perc_th_8_8_9_9_Slab_18_Aug_Ground_0_0_30min/FILTERED/DataF_Muon_CFD_6_75perc_th_8_8_9_9_Slab_18_Aug_Ground_0_0_30min.root",
     ]
 
-    file_list = []
-    for directory in parent_directories:
-        files = glob.glob(os.path.join(directory, "**", "*.root"), recursive=True)
-        file_list.extend(files)
+    # Validate all files exist
+    for f in file_list:
+        if not os.path.isfile(f):
+            raise FileNotFoundError(f"❌ File not found: {f}")
 
-    file_list = sorted(file_list)
-
-    # Allowed channels for all files
     allowed_channels_list = [
-        get_channels_from_config(["square_slab", "1st_bar", "2nd_bar"]) for _ in file_list
+        get_channels_from_config(["square_slab"]) for _ in file_list
     ]
-
-    print(type(allowed_channels_list))
 
     E_list = []
     df_grouped_energy_list = []
-
-    plt.figure(figsize=(10, 5))
-    colors = ['blue', 'green', 'red', 'orange', 'black', 'purple', 'brown', 'pink']
 
     for counter, filename in enumerate(file_list):
         print("==== Processing file:", filename)
@@ -50,6 +37,7 @@ def run_analysis():
         df_grouped_energy_list.append(df_grouped_energy)
 
     # Plot Energy Histograms per dataset and channel
+    colors = ['blue', 'green', 'red', 'orange', 'black', 'purple', 'brown', 'pink']
     for i, E in enumerate(E_list):
         allowed_channels = allowed_channels_list[i]
         plt.figure(figsize=(10, 6))
@@ -63,11 +51,11 @@ def run_analysis():
         plt.yscale("log")
         plt.title(f"Energy Histogram for Dataset {i+1}")
         plt.tight_layout()
+        #plt.show()
 
     # Energy Ratio Histograms for all datasets combined
     plt.figure(figsize=(12, 6))
     colors = ['red', 'blue', 'green', 'orange', 'purple', 'cyan', 'magenta', 'brown']
-
     for file_idx, df_grouped_energy in enumerate(df_grouped_energy_list):
         ratio_cols = [col for col in df_grouped_energy.columns if col.startswith("Ratio_")]
         for r_idx, col in enumerate(ratio_cols):
@@ -77,7 +65,6 @@ def run_analysis():
                 plt.hist(data, bins=100, histtype='step', alpha=0.7,
                          label=f'File {file_idx+1} - {col}',
                          color=color, density=True)
-
     plt.xlabel("Energy Ratio")
     plt.ylabel("Normalized Counts")
     plt.title("Energy Ratio Histograms (All Files)")
@@ -85,10 +72,92 @@ def run_analysis():
     plt.grid(True)
     plt.tight_layout()
     plt.yscale("log")
+   # plt.show()
+
+    # Energy Histograms with Gaussian fits per channel
+    plt.figure(figsize=(12, 6))
+    channel_sigma_results = {}
+    channel_mean_results = {}
+
+    for file_idx, E in enumerate(E_list):
+        allowed_channels = allowed_channels_list[file_idx]
+        for ch in allowed_channels:
+            if ch in E and len(E[ch]) > 0:
+                data = np.array(E[ch])
+                counts, bins = np.histogram(data, bins=100, density=True)
+                bin_centers = 0.5 * (bins[:-1] + bins[1:])
+                p0 = [np.max(counts), np.mean(data), np.std(data)]
+                try:
+                    popt, _ = curve_fit(gaussian, bin_centers, counts, p0=p0)
+                    amp, mu, sigma = popt
+                    key = f'File{file_idx+1}_Ch{ch}'
+                    channel_sigma_results[key] = sigma
+                    channel_mean_results[key] = mu
+                    plt.hist(data, bins=100, histtype='step', alpha=0.7,
+                             label=f'File {file_idx+1} - Ch {ch}', density=True)
+                    x_fit = np.linspace(bin_centers[0], bin_centers[-1], 1000)
+                    y_fit = gaussian(x_fit, *popt)
+                    plt.plot(x_fit, y_fit, linestyle='--',
+                             label=f'Fit Ch{ch} μ={mu:.1f}, σ={sigma:.1f}')
+                except RuntimeError:
+                    print(f"⚠️ Gaussian fit failed for Channel {ch} in File {file_idx+1}")
+                    channel_sigma_results[key] = None
+                    channel_mean_results[key] = None
+
+    plt.xlabel("Energy (ADC units or keV)")
+    plt.ylabel("Normalized Counts")
+    plt.title("Energy Histograms with Gaussian Fits (Per Channel)")
+    plt.legend(fontsize='small', ncol=2)
+    plt.grid(True)
+    plt.tight_layout()
+    #plt.show()
+
+    print("\nGaussian fit results for individual channels:")
+    for key in sorted(channel_sigma_results.keys()):
+        mu_val = channel_mean_results.get(key)
+        sigma_val = channel_sigma_results.get(key)
+        if mu_val is not None and sigma_val is not None:
+            print(f"{key}: mean (μ) = {mu_val:.4f}, sigma (σ) = {sigma_val:.4f}")
+        else:
+            print(f"{key}: fit failed")
+
+    # Energy ratio log histograms for log(Q0/Q2) and log(Q1/Q3)
+    plt.figure(figsize=(12, 6))
+    colors = ['blue', 'green', 'red', 'orange', 'purple', 'cyan', 'magenta', 'brown']
+
+    for file_idx, df_grouped_energy in enumerate(df_grouped_energy_list):
+        color_base_idx = file_idx * 2
+
+        # log(Q0/Q2)
+        if "Ch_0" in df_grouped_energy.columns and "Ch_2" in df_grouped_energy.columns:
+            q0 = df_grouped_energy["Ch_0"]
+            q2 = df_grouped_energy["Ch_2"]
+            valid_mask = (q0 > 0) & (q2 > 0)
+            log_q0_q2 = np.log(q0[valid_mask] / q2[valid_mask])
+            plt.hist(log_q0_q2, bins=100, histtype='step', alpha=0.8,
+                     label=f'File {file_idx+1} - log(Ch_0/Ch_2)',
+                     color=colors[color_base_idx % len(colors)], density=True)
+
+        # log(Q1/Q3)
+        if "Ch_1" in df_grouped_energy.columns and "Ch_3" in df_grouped_energy.columns:
+            q1 = df_grouped_energy["Ch_1"]
+            q3 = df_grouped_energy["Ch_3"]
+            valid_mask = (q1 > 0) & (q3 > 0)
+            log_q1_q3 = np.log(q1[valid_mask] / q3[valid_mask])
+            plt.hist(log_q1_q3, bins=100, histtype='step', alpha=0.8,
+                     label=f'File {file_idx+1} - log(Ch_1/Ch_3)',
+                     color=colors[(color_base_idx + 1) % len(colors)], density=True)
+
+    plt.xlabel("log(Energy Ratio)")
+    plt.ylabel("Normalized Counts")
+    plt.title("log(Ch_0/Ch_2) and log(Ch_1/Ch_3) Energy Ratio Histograms")
+    plt.legend(fontsize='small', ncol=2)
+    plt.grid(True)
+    plt.tight_layout()
+   # plt.show()
 
     # Combined Energy Histograms for all datasets
     plt.figure(figsize=(12, 6))
-
     for file_idx, E in enumerate(E_list):
         allowed_channels = allowed_channels_list[file_idx]
         for ch_idx, ch in enumerate(allowed_channels):
@@ -96,7 +165,6 @@ def run_analysis():
                 color_idx = (file_idx * len(allowed_channels) + ch_idx) % len(colors)
                 plt.hist(E[ch], bins=500, histtype='step', alpha=0.8,
                          label=f'File {file_idx+1} - {ch}', color=colors[color_idx])
-
     plt.xlabel("Energy (ADC units or keV)")
     plt.ylabel("Counts")
     plt.yscale("log")
@@ -104,38 +172,36 @@ def run_analysis():
     plt.title("Energy Histograms for Square Slab, 1st Bar, 2nd Bar (dataset)")
     plt.grid(True)
     plt.tight_layout()
+    #plt.show()
 
-    # Time difference histograms (TimeDiff_0_2 and TimeDiff_1_3)
+    # Time difference histograms (TimeDiff_0_2)
     plt.figure(figsize=(10, 6))
-
     for file_idx, df_grouped_energy in enumerate(df_grouped_energy_list):
-        # TimeDiff_0_2
         if "TimeDiff_0_2" in df_grouped_energy.columns:
             time_diff_0_2 = df_grouped_energy["TimeDiff_0_2"].dropna().values / 1000.0
             if len(time_diff_0_2) > 0:
                 plt.hist(time_diff_0_2, bins=100, histtype='step', alpha=0.7,
                          label=f'File {file_idx+1} - TimeDiff_0_2',
-                         color=colors[file_idx % len(colors)], density=True, linestyle='-')
-
-        # TimeDiff_1_3
-        if "TimeDiff_1_3" in df_grouped_energy.columns:
-            time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
-            if len(time_diff_1_3) > 0:
-                plt.hist(time_diff_1_3, bins=100, histtype='step', alpha=0.7,
-                         label=f'File {file_idx+1} - TimeDiff_1_3',
                          color=colors[file_idx % len(colors)], density=True, linestyle='--')
+        # TimeDiff_1_3 (commented out but can be enabled if needed)
+        # if "TimeDiff_1_3" in df_grouped_energy.columns:
+        #     time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
+        #     if len(time_diff_1_3) > 0:
+        #         plt.hist(time_diff_1_3, bins=100, histtype='step', alpha=0.7,
+        #                  label=f'File {file_idx+1} - TimeDiff_1_3',
+        #                  color=colors[file_idx % len(colors)], density=True, linestyle='--')
 
     plt.xlabel("Time Difference (timestamp units / 1000)")
     plt.ylabel("Normalized Counts")
-    plt.title("TimeDiff_0_2 and TimeDiff_1_3 Histograms (No Fit, Scaled)")
+    plt.title("TimeDiff_0_2 and Timediff_1_3 Histograms (No Fit, Scaled)")
     plt.legend(fontsize='small', ncol=2)
     plt.grid(True)
     plt.tight_layout()
     plt.xlim(-10, 10)
+   # plt.show()
 
     # Gaussian fitting for time differences
     plt.figure(figsize=(10, 6))
-
     for file_idx, df_grouped_energy in enumerate(df_grouped_energy_list):
         color = colors[file_idx % len(colors)]
 
@@ -159,25 +225,25 @@ def run_analysis():
                     print(f"⚠️ Gaussian fit failed for TimeDiff_0_2 in File {file_idx+1}")
                     y_mean_list.append(np.nan)
 
-        # Fit TimeDiff_1_3
-        if "TimeDiff_1_3" in df_grouped_energy.columns:
-            time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
-            if len(time_diff_1_3) > 0:
-                counts, bins, _ = plt.hist(time_diff_1_3, bins=100, histtype='step',
-                                           alpha=0.6, label=f'File {file_idx+1} - TimeDiff_1_3',
-                                           color=color, density=True, linestyle=':')
-                bin_centers = 0.5 * (bins[:-1] + bins[1:])
-                p0 = [np.max(counts), np.mean(time_diff_1_3), np.std(time_diff_1_3)]
-                try:
-                    popt, _ = curve_fit(gaussian, bin_centers, counts, p0=p0)
-                    x_fit = np.linspace(bin_centers[0], bin_centers[-1], 1000)
-                    y_fit = gaussian(x_fit, *popt)
-                    plt.plot(x_fit, y_fit, linestyle='-.', color=color,
-                             label=f'Fit 1_3 F{file_idx+1}: μ={popt[1]:.2f}, σ={popt[2]:.2f}')
-                    x_mean_list.append(float(popt[1]))
-                except RuntimeError:
-                    print(f"⚠️ Gaussian fit failed for TimeDiff_1_3 in File {file_idx+1}")
-                    x_mean_list.append(np.nan)
+        # Fit TimeDiff_1_3 (commented out but can be enabled if needed)
+        # if "TimeDiff_1_3" in df_grouped_energy.columns:
+        #     time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
+        #     if len(time_diff_1_3) > 0:
+        #         counts, bins, _ = plt.hist(time_diff_1_3, bins=100, histtype='step',
+        #                                    alpha=0.6, label=f'File {file_idx+1} - TimeDiff_1_3',
+        #                                    color=color, density=True, linestyle=':')
+        #         bin_centers = 0.5 * (bins[:-1] + bins[1:])
+        #         p0 = [np.max(counts), np.mean(time_diff_1_3), np.std(time_diff_1_3)]
+        #         try:
+        #             popt, _ = curve_fit(gaussian, bin_centers, counts, p0=p0)
+        #             x_fit = np.linspace(bin_centers[0], bin_centers[-1], 1000)
+        #             y_fit = gaussian(x_fit, *popt)
+        #             plt.plot(x_fit, y_fit, linestyle='-.', color=color,
+        #                      label=f'Fit 1_3 F{file_idx+1}: μ={popt[1]:.2f}, σ={popt[2]:.2f}')
+        #             x_mean_list.append(float(popt[1]))
+        #         except RuntimeError:
+        #             print(f"⚠️ Gaussian fit failed for TimeDiff_1_3 in File {file_idx+1}")
+        #             x_mean_list.append(np.nan)
 
     plt.xlabel("Time Difference (timestamp units / 1000)")
     plt.ylabel("Normalized Counts")
@@ -196,8 +262,10 @@ def run_analysis():
     return x_mean_list, y_mean_list
 
 
+
+
 # Uncomment and use this part after calling run_analysis()
-'''
+'''vvv
 
 
 # Polynomial fitting example using predefined data
