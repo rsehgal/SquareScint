@@ -1,3 +1,14 @@
+import uproot
+
+file_path = "/home/harshita/shared/SquareScint_Harshita/MuonData/merged_dataMu.root"
+tree_path = "outml"  # Based on /treeML;1
+
+with uproot.open(file_path) as f:
+    tree = f[tree_path]
+    print("Available branches:")
+    print(tree.keys())
+
+'''
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -37,7 +48,7 @@ output_df['Predicted_Target'] = predictions
 output_df.to_csv('predictions_ortho6nndata.csv', index=False)
 print("✅ Predictions saved to 'predictions_ortho6nndata.csv'")
 
-'''
+
 # Predict using the model
 predictions = model.predict(X)
 
@@ -46,7 +57,6 @@ output_df = X.copy()
 output_df['Predicted_Target'] = predictions
 output_df.to_csv('/home/harshita/shared/new_predictions.csv', index=False)
 print("✅ Predictions saved to 'predictions_only.csv'")
-'''
 
 # Calculate the difference (error)
 
@@ -66,7 +76,7 @@ plt.yscale('log')
 plt.legend()
 plt.tight_layout()
 plt.show()
-'''
+
 # 1. Histogram of error
 plt.figure(figsize=(10, 6))
 plt.hist(output_df['Error'], bins=200,range= (-200,200), histtype='step', color='red', alpha=0.6)

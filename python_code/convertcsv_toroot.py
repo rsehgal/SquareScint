@@ -1,3 +1,4 @@
+'''
 import pandas as pd
 import uproot
 import awkward as ak
@@ -21,3 +22,34 @@ with uproot.recreate("/home/harshita/shared/text1_xdata.root") as f:
     f["Events"] = ak_array  # 'Events' is the tree name
 
 print("✅ Saved ROOT file with tree 'Events' and branches: Q0–Q5")
+
+import uproot
+import awkward as ak
+import pandas as pd
+
+root_path = "/home/harshita/shared/SquareScint_Harshita/Data/merged_outputt_.root"
+tree_name = "treeML"
+csv_path = "/home/harshita/shared/SquareScint_Harshita/Data/output_merged_.csv"
+
+with uproot.open(root_path) as file:
+    tree = file[ ]
+    # Load jagged arrays as awkward arrays
+    arrays = tree.arrays(library="ak")
+
+# Convert awkward arrays to pandas DataFrame after flattening or converting jagged arrays to lists
+# For example, convert each jagged array branch to lists:
+data_dict = {}
+for key, array in arrays.items():
+    # Convert jagged array to list of lists or list of values
+    data_dict[key] = ak.to_list(array)
+
+df = pd.DataFrame(data_dict)
+
+df.to_csv(csv_path, index=False)
+print(f"Saved to {csv_path}")
+'''
+
+
+
+
+
