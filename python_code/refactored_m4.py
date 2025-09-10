@@ -18,13 +18,6 @@ available_setups = ["square_slab", "1st_bar", "2nd_bar"]
 def gaussian(x, A, mu, sigma):
     return A * np.exp(-(x - mu) ** 2 / (2 * sigma ** 2))
 
-def plot_2d_gaussian_surface(coords, A, x0, y0, sigma_x, sigma_y, theta):
-    x, y = coords
-    a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (2 * sigma_y ** 2)
-    b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(2 * theta)) / (4 * sigma_y ** 2)
-    c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (2 * sigma_y ** 2)
-    return A * np.exp(-(a*(x - x0)**2 + 2*b*(x - x0)*(y - y0) + c*(y - y0)**2))
-
 # Mapping of detector setups to channels
 detector_configurations = {
     "square_slab": [0, 1, 2, 3],
@@ -192,21 +185,6 @@ def ProcessData(filename, allowed_channels):
     if 'TimeDiff_1_3' in df_grouped_energy.columns:
         mu_1_3 = fit_and_get_mu(df_grouped_energy['TimeDiff_1_3'])
         x_mean_list.append(mu_1_3)
-
-    # ✅ Calculate Q4 using logs of Q0, Q1, Q2, Q3
-    required_cols = ['Ch_0', 'Ch_1', 'Ch_2', 'Ch_3']
-    if all(col in df_grouped_energy.columns for col in required_cols):
-        with np.errstate(divide='ignore', invalid='ignore'):
-            lnQ0 = np.log(df_grouped_energy['Ch_0'])
-            lnQ1 = np.log(df_grouped_energy['Ch_1'])
-            lnQ2 = np.log(df_grouped_energy['Ch_2'])
-            lnQ3 = np.log(df_grouped_energy['Ch_3'])
-
-            numerator = lnQ0**2 + lnQ2**2 - lnQ1**2 - lnQ3**2
-            denominator = 2 * np.log((df_grouped_energy['Ch_0'] * df_grouped_energy['Ch_2']) / (df_grouped_energy['Ch_1'] * df_grouped_energy['Ch_3']))
-            Q4 = np.exp(numerator / denominator)
-
-            df_grouped_energy['Q4'] = Q4
 
     # ✅ Print first 5 of each ratio and time diff
     for col in df_grouped_energy.columns:

@@ -291,3 +291,64 @@ else:
     print(f"⚠️ 'TimeDiff_0_2' not found in file: {separate_file}")
 """
 
+#--------------------------------------------------------
+
+
+
+
+    def run_analysis():
+    # ✅ Directly specify the .root files (no folder search)
+    file_list = [
+        "/data/WaveAnalysis/Muon_CFD_6_75perc_th_8_8_9_9_Slab_18_Aug_Ground_0_0_30min/FILTERED/DataF_Muon_CFD_6_75perc_th_8_8_9_9_Slab_18_Aug_Ground_0_0_30min.root",
+    ]
+
+    # Validate all files exist
+    for f in file_list:
+        if not os.path.isfile(f):
+            raise FileNotFoundError(f"❌ File not found: {f}")
+
+    allowed_channels_list = [
+        get_channels_from_config(["square_slab"]) for _ in file_list
+    ]
+
+
+
+    ------------------------------------
+    '''
+         #Fit TimeDiff_1_3 (commented out but can be enabled if needed)
+        if "TimeDiff_1_3" in df_grouped_energy.columns:
+            time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
+            if len(time_diff_1_3) > 0:
+                counts, bins, _ = plt.hist(time_diff_1_3, bins=100, histtype='step',
+                                           alpha=0.6, label=f'File {file_idx+1} - TimeDiff_1_3',
+                                           color=color, density=True, linestyle=':')
+                bin_centers = 0.5 * (bins[:-1] + bins[1:])
+                p0 = [np.max(counts), np.mean(time_diff_1_3), np.std(time_diff_1_3)]
+                try:
+                    popt, _ = curve_fit(gaussian, bin_centers, counts, p0=p0)
+                    x_fit = np.linspace(bin_centers[0], bin_centers[-1], 1000)
+                    y_fit = gaussian(x_fit, *popt)
+                    plt.plot(x_fit, y_fit, linestyle='-.', color=color,
+                              label=f'Fit 1_3 F{file_idx+1}: μ={popt[1]:.2f}, σ={popt[2]:.2f}')
+                    x_mean_list.append(float(popt[1]))
+                except RuntimeError:
+                    print(f"⚠️ Gaussian fit failed for TimeDiff_1_3 in File {file_idx+1}")
+                    x_mean_list.append(np.nan)
+                    '''
+
+                    --------------------------------
+                      # TimeDiff_1_3 (commented out but can be enabled if needed)
+        if "TimeDiff_1_3" in df_grouped_energy.columns:
+            time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
+            if len(time_diff_1_3) > 0:
+                plt.hist(time_diff_1_3, bins=100, histtype='step', alpha=0.7,
+                          label=f'File {file_idx+1} - TimeDiff_1_3',
+                          color=colors[file_idx % len(colors)], density=True, linestyle='--')
+--------------
+  # TimeDiff_1_3 (commented out but can be enabled if needed)
+        if "TimeDiff_1_3" in df_grouped_energy.columns:
+            time_diff_1_3 = df_grouped_energy["TimeDiff_1_3"].dropna().values / 1000.0
+            if len(time_diff_1_3) > 0:
+                plt.hist(time_diff_1_3, bins=100, histtype='step', alpha=0.7,
+                          label=f'File {file_idx+1} - TimeDiff_1_3',
+                          color=colors[file_idx % len(colors)], density=True, linestyle='--')
