@@ -5,13 +5,30 @@
 */
 #include <iostream>
 #include "Helpers.h"
+#include <algorithm>
+HitPtrCompare comp;
 
-HitSet slab                    = {new Hit(0), new Hit(1), new Hit(2), new Hit(3)};
-HitSet slabWithTopBar          = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(4), new Hit(5)};
-HitSet slabWithBottomBar          = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(6), new Hit(7)};
+HitSet slab              = {new Hit(0), new Hit(1), new Hit(2), new Hit(3)};
+HitSet slabWithTopBar    = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(4), new Hit(5)};
+HitSet slabWithBottomBar = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(6), new Hit(7)};
 
 HitSet slabWithTopAndBottomBar = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
                                   new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+
+HitSet OnlyTopAndBottomBar = {new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+
+HitSet slabWithCylinderAndBottomBar = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
+                                       new Hit(8), new Hit(6), new Hit(7)};
+
+bool IsSubset(const HitSet &superSet, const HitSet &subSet)
+{
+  bool b_is_subset_of_a = std::includes(superSet.begin(), superSet.end(), 
+                                        subSet.begin(), subSet.end(),
+				        comp	
+  );
+
+  return b_is_subset_of_a;
+}
 
 bool EqualSets(const HitSet &s1, const HitSet &s2)
 {

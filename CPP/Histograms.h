@@ -18,6 +18,7 @@ extern TH1F *histQ4;
 extern TH1F *histQ5;
 extern TH1F *histQ6;
 extern TH1F *histQ7;
+extern TH1F *histQ8;
 
 extern std::vector<TH1F*> vecOfHist;
 

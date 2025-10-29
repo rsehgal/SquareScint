@@ -26,51 +26,51 @@ int main(int argc, char *argv[])
   std::string outfile = "output.root";
   if (argc > 2) outfile = std::string(argv[2]);
 
-  TFile *outputFile = new TFile(outfile.c_str(),"RECREATE");
-  TTree *treeML = new TTree("treeML","A Tree for ML"); 
+  TFile *outputFile = new TFile(outfile.c_str(), "RECREATE");
+  TTree *treeML     = new TTree("treeML", "A Tree for ML");
   std::vector<int> qVec;
 
-  UShort_t q0=0;
-  UShort_t q1=0;
-  UShort_t q2=0;
-  UShort_t q3=0;
-  UShort_t q4=0;
-  UShort_t q5=0;
-  UShort_t q6=0;
-  UShort_t q7=0;
+  UShort_t q0 = 0;
+  UShort_t q1 = 0;
+  UShort_t q2 = 0;
+  UShort_t q3 = 0;
+  UShort_t q4 = 0;
+  UShort_t q5 = 0;
+  UShort_t q6 = 0;
+  UShort_t q7 = 0;
+  UShort_t q8 = 0;
 
+  ULong64_t t0 = 0;
+  ULong64_t t1 = 0;
+  ULong64_t t2 = 0;
+  ULong64_t t3 = 0;
+  ULong64_t t4 = 0;
+  ULong64_t t5 = 0;
+  ULong64_t t6 = 0;
+  ULong64_t t7 = 0;
+  ULong64_t t8 = 0;
 
-  ULong64_t t0=0;
-  ULong64_t t1=0;
-  ULong64_t t2=0;
-  ULong64_t t3=0;
-  ULong64_t t4=0;
-  ULong64_t t5=0;
-  ULong64_t t6=0;
-  ULong64_t t7=0;
+  treeML->Branch("qVec", &qVec);
+  treeML->Branch("q0", &q0);
+  treeML->Branch("q1", &q1);
+  treeML->Branch("q2", &q2);
+  treeML->Branch("q3", &q3);
+  treeML->Branch("q4", &q4);
+  treeML->Branch("q5", &q5);
+  treeML->Branch("q6", &q6);
+  treeML->Branch("q7", &q7);
+  treeML->Branch("q8", &q8);
 
+  treeML->Branch("t0", &t0);
+  treeML->Branch("t1", &t1);
+  treeML->Branch("t2", &t2);
+  treeML->Branch("t3", &t3);
+  treeML->Branch("t4", &t4);
+  treeML->Branch("t5", &t5);
+  treeML->Branch("t6", &t6);
+  treeML->Branch("t7", &t7);
+  treeML->Branch("t8", &t8);
 
-  treeML->Branch("qVec",&qVec);
-  treeML->Branch("q0",&q0);
-  treeML->Branch("q1",&q1);
-  treeML->Branch("q2",&q2);
-  treeML->Branch("q3",&q3);
-  treeML->Branch("q4",&q4);
-  treeML->Branch("q5",&q5);
-  treeML->Branch("q6",&q6);
-  treeML->Branch("q7",&q7);
-
-
-  treeML->Branch("t0",&t0);
-  treeML->Branch("t1",&t1);
-  treeML->Branch("t2",&t2);
-  treeML->Branch("t3",&t3);
-  treeML->Branch("t4",&t4);
-  treeML->Branch("t5",&t5);
-  treeML->Branch("t6",&t6);
-  treeML->Branch("t7",&t7);
- 
-  
   // Declaration of leaves types
   UShort_t Channel;
   ULong64_t Timestamp;
@@ -163,19 +163,19 @@ int main(int argc, char *argv[])
 
   /*
   for(const auto& vec : vecOfVecOfHits){
-	  if (vec.size()==8){
-		  std::cout << "Correct event found....." <<std::endl;
-	  }
+    if (vec.size()==8){
+      std::cout << "Correct event found....." <<std::endl;
+    }
   }
   */
 
-  //return 0;
+  // return 0;
 
   histQ0->SetLineColor(1);
   histQ1->SetLineColor(2);
   histQ2->SetLineColor(4);
   histQ3->SetLineColor(8);
- 
+
   histQ4->SetLineColor(6);
   histQ5->SetLineColor(30);
 
@@ -191,35 +191,86 @@ int main(int argc, char *argv[])
      hit->Print();
     }
     */
-    
-    //if (EqualSets(hs, slabWithTopAndBottomBar)) {
+
+    // if (EqualSets(hs, slabWithTopAndBottomBar)) {
     qVec.clear();
-    if (EqualSets(hs, slabWithTopAndBottomBar)) {
-    //if (EqualSets(hs, slabWithTopBar)) {
-    //if (EqualSets(hs, slabWithBottomBar)) {
-    //if (EqualSets(hs, slab)) {
-    //  std::cout << "======================================" << std::endl;
-	qVec.resize(8);
+    // if (EqualSets(hs, slabWithCylinderAndBottomBar)) {
+    // if (EqualSets(hs, slabWithTopAndBottomBar)) {
+
+    //if (IsSubset(hs, slabWithTopAndBottomBar)) {
+    //if (IsSubset(hs, OnlyTopAndBottomBar)) {
+    if (IsSubset(hs, slab)) {
+      q0 = 0;
+      q1 = 0;
+      q2 = 0;
+      q3 = 0;
+      q4 = 0;
+      q5 = 0;
+      q6 = 0;
+      q7 = 0;
+      q8 = 0;
+
+      t0 = 0;
+      t1 = 0;
+      t2 = 0;
+      t3 = 0;
+      t4 = 0;
+      t5 = 0;
+      t6 = 0;
+      t7 = 0;
+      t8 = 0;
+
+      // if (EqualSets(hs, OnlyTopAndBottomBar)) {
+      // if (EqualSets(hs, slabWithTopBar)) {
+      // if (EqualSets(hs, slabWithBottomBar)) {
+      // if (EqualSets(hs, slab)) {
+      //   std::cout << "======================================" << std::endl;
+      qVec.resize(9);
       for (const auto &hit : hs) {
         // hit->Print();
-	if(hit->Channel < 8){
-        vecOfHist[hit->Channel]->Fill(hit->Energy);
-	qVec[hit->Channel]=hit->Energy;
+        if (hit->Channel < 9) {
+          vecOfHist[hit->Channel]->Fill(hit->Energy);
+          qVec[hit->Channel] = hit->Energy;
 
-	if(hit->Channel==0){q0=hit->Energy; t0=hit->Timestamp;}  
-	if(hit->Channel==1){q1=hit->Energy; t1=hit->Timestamp;}
-	if(hit->Channel==2){q2=hit->Energy; t2=hit->Timestamp;}
-	if(hit->Channel==3){q3=hit->Energy; t3=hit->Timestamp;}
-	if(hit->Channel==4){q4=hit->Energy; t4=hit->Timestamp;}
-	if(hit->Channel==5){q5=hit->Energy; t5=hit->Timestamp;}
-	if(hit->Channel==6){q6=hit->Energy; t6=hit->Timestamp;}
-	if(hit->Channel==7){q7=hit->Energy; t7=hit->Timestamp;}
-
+          if (hit->Channel == 0) {
+            q0 = hit->Energy;
+            t0 = hit->Timestamp;
+          }
+          if (hit->Channel == 1) {
+            q1 = hit->Energy;
+            t1 = hit->Timestamp;
+          }
+          if (hit->Channel == 2) {
+            q2 = hit->Energy;
+            t2 = hit->Timestamp;
+          }
+          if (hit->Channel == 3) {
+            q3 = hit->Energy;
+            t3 = hit->Timestamp;
+          }
+          if (hit->Channel == 4) {
+            q4 = hit->Energy;
+            t4 = hit->Timestamp;
+          }
+          if (hit->Channel == 5) {
+            q5 = hit->Energy;
+            t5 = hit->Timestamp;
+          }
+          if (hit->Channel == 6) {
+            q6 = hit->Energy;
+            t6 = hit->Timestamp;
+          }
+          if (hit->Channel == 7) {
+            q7 = hit->Energy;
+            t7 = hit->Timestamp;
+          }
+          if (hit->Channel == 8) {
+            q8 = hit->Energy;
+            t8 = hit->Timestamp;
+          }
+        }
       }
-}
-	treeML->Fill();
-	
-
+      treeML->Fill();
     }
   }
 
@@ -228,29 +279,29 @@ int main(int argc, char *argv[])
 
   std::cout << "All Done...................." << std::endl;
 
-/*  ULong64_t maxHEnties = 0;
-  short index          = -10;
-  short i              = 0;
-  for (const auto &hist : vecOfHist) {
-    if (hist->GetEntries() > maxHEnties) {
-      maxHEnties = hist->GetEntries();
-      index      = i;
+  /*  ULong64_t maxHEnties = 0;
+    short index          = -10;
+    short i              = 0;
+    for (const auto &hist : vecOfHist) {
+      if (hist->GetEntries() > maxHEnties) {
+        maxHEnties = hist->GetEntries();
+        index      = i;
+      }
+      i++;
     }
-    i++;
-  }
-  std::cout << "Index : " << index << " : Has max entries ..." << std::endl;
+    std::cout << "Index : " << index << " : Has max entries ..." << std::endl;
 
-  vecOfHist[index]->Draw("hist");
-  i = 0;
-  for (const auto &hist : vecOfHist) {
-    if (i != index) {
-      hist->Draw("histsames");
+    vecOfHist[index]->Draw("hist");
+    i = 0;
+    for (const auto &hist : vecOfHist) {
+      if (i != index) {
+        hist->Draw("histsames");
+      }
+      i++;
     }
-    i++;
-  }
-*/
- /* new TCanvas("TopBar","TopBar");
-  vecOfHist[4]->Draw("hist");
-  vecOfHist[5]->Draw("histsames");*/
-  //fApp->Run();
+  */
+  /* new TCanvas("TopBar","TopBar");
+   vecOfHist[4]->Draw("hist");
+   vecOfHist[5]->Draw("histsames");*/
+  // fApp->Run();
 }

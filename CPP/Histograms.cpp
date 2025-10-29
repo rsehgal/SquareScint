@@ -16,5 +16,6 @@ TH1F *histQ4 = new TH1F("Q4", "Q4", nbins, 0, 16384);
 TH1F *histQ5 = new TH1F("Q5", "Q5", nbins, 0, 16384);
 TH1F *histQ6 = new TH1F("Q6", "Q6", nbins, 0, 16384);
 TH1F *histQ7 = new TH1F("Q7", "Q7", nbins, 0, 16384);
+TH1F *histQ8 = new TH1F("Q8", "Q8", nbins, 0, 16384);
 
-std::vector<TH1F *> vecOfHist = {histQ0, histQ1, histQ2, histQ3, histQ4, histQ5, histQ6, histQ7};
+std::vector<TH1F *> vecOfHist = {histQ0, histQ1, histQ2, histQ3, histQ4, histQ5, histQ6, histQ7,histQ8};
