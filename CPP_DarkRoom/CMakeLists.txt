@@ -80,3 +80,7 @@ target_link_libraries(PositionCalib ${ROOT_LIBRARIES})
 
 add_executable(PositionCalib_sq PositionCalib_sq.cpp)
 target_link_libraries(PositionCalib_sq ${ROOT_LIBRARIES})
+
+add_executable(UniformityCheck UniformityCheck.cpp)
+target_link_libraries(UniformityCheck ${ROOT_LIBRARIES})
+
