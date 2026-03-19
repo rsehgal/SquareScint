@@ -4,6 +4,11 @@
 #include "G4SystemOfUnits.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
+
+#ifdef USE_CRY
+#include "CryInterface.h"
+#endif
+
 SlabCalib_PrimaryGeneratorAction::SlabCalib_PrimaryGeneratorAction() {
     G4int n_particle = 1;
     fParticleGun = new G4ParticleGun(n_particle);
@@ -14,7 +19,9 @@ SlabCalib_PrimaryGeneratorAction::SlabCalib_PrimaryGeneratorAction() {
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
     fParticleGun->SetParticleEnergy(1.0 * MeV);
     
-    
+#ifdef USE_CRY
+    cryInterface = new CryInterface();
+#endif    
     // TODO : Add your desired particles
 }
 
@@ -36,9 +43,21 @@ void SlabCalib_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 
     G4ThreeVector start(randX1,ypos,randZ1);
     G4ThreeVector end(randX2,-1.*ypos,randZ2);
-    //G4ThreeVector dir=(end-start).unit();
+
     G4ThreeVector dir(0.,-1.,0.);
+
+#ifdef USE_CRY
+    Muon *muon                = cryInterface->SampleMuon();
+    fParticleGun->SetParticleEnergy(muon->energy);
+    dir.set(muon->angleX,muon->angleY,muon->angleZ);
+    dir = dir.unit();
+#else
+    fParticleGun->SetParticleEnergy(2*GeV);
+    dir=(end-start).unit();
+#endif
+
+
     fParticleGun->SetParticlePosition(start);
-    fParticleGun->SetParticleMomentumDirection(dir);   
+    fParticleGun->SetParticleMomentumDirection(dir);
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }

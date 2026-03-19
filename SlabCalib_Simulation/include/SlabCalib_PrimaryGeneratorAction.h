@@ -4,7 +4,12 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 
+class CryInterface;
+
 class SlabCalib_PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
+#ifdef USE_CRY
+    CryInterface *cryInterface;
+#endif
 public:
     SlabCalib_PrimaryGeneratorAction();
     virtual ~SlabCalib_PrimaryGeneratorAction();

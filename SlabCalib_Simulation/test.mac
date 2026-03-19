@@ -1,7 +1,7 @@
 /run/initialize
-/run/printProgress 100000
+/run/printProgress 10000
 /gun/particle mu-
 #/gun/position 0 15 0 cm
 #/gun/direction 0 -1 0
-/gun/energy 4 GeV
-/run/beamOn 1000000 
+#/gun/energy 4 GeV
+/run/beamOn 100000
