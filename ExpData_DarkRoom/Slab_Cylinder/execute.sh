@@ -9,7 +9,8 @@ for i in $(seq -20 10 20); do
     for j in $(seq -20 10 20); do
 
 	    filename=$flname""$i"_"$j"_18Mar_60min.root"
-            outfilename="output_"$filename
+            #outfilename="output_"$filename
+            outfilename="output_"$i"_"$j".root"
 	    if [ -f $filename ]; then 
 	        echo $filename
 	        ./ProcessData2 $filename $outfilename

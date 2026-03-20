@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   //
   //
   TFile *f       = new TFile(argv[1], "r");
-  char *treeName = "treeML";
+  const char *treeName = "treeML";
   // if(trName!="")
   // treeName = trName.c_string();
 

@@ -201,9 +201,9 @@ int main(int argc, char *argv[])
    // if (IsSubset(hs, slabWithTopAndBottomBar)) {
     //std::cout <<"Event found.........." << std::endl;
     //if (IsSubset(hs, OnlyTopAndBottomBar)) {
-    //if (IsSubset(hs, slabWithCylinder)) {
+    if (IsSubset(hs, slabWithCylinder)) {
     //if (IsSubset(hs, topBar) && !IsSubset(hs, slab)) {
-    if (IsSubset(hs, slab)) {
+    //if (IsSubset(hs, slab)) {
     //if (IsSubset(hs, topBar)) {
     //if (IsSubset(hs, darkRoomTopBar)) {
       q0 = 0;

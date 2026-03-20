@@ -7,7 +7,7 @@ int main(int argc, char *argv[]){
 
 char *filename = argv[1];
 TFile *f = new TFile(filename,"r");
-char *treeName ="delTTree";//"" "treeML";
+const char *treeName ="delTTree";//"" "treeML";
 //if(trName!="")
 //treeName = trName.c_string();
 
