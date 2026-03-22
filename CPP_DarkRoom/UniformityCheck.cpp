@@ -11,65 +11,9 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
-
+#include "Helpers.h"
 namespace fs = std::filesystem;
 
-/*std::vector<std::string> GetListOfFiles(std::string searchToken,std::string
-targetDir="./")
-{
-  std::vector<std::string> matchingFiles;
-  try {
-    // 1. Iterate over the directory entries
-    for (const auto &entry : fs::directory_iterator(targetDir)) {
-      // 2. Check if the entry is a regular file
-      if (entry.is_regular_file()) {
-        std::string filename = entry.path().filename().string();
-
-        // 3. Search for the substring within the filename
-        if (filename.find(searchToken) != std::string::npos) {
-          matchingFiles.push_back(filename);
-        }
-      }
-    }
-
-    // Output results
-    std::cout << "Found " << matchingFiles.size() << " matching files:\n";
-    for (const auto &name : matchingFiles) {
-      std::cout << " - " << name << "\n";
-    }
-
-  } catch (const fs::filesystem_error &e) {
-    std::cerr << "Error accessing directory: " << e.what() << "\n";
-  }
-  return matchingFiles;
-}
-*/
-std::vector<std::string> GetListOfFiles(std::vector<std::string> searchTokens,
-                                        std::string targetDir = "./") {
-  std::vector<std::string> matchingFiles;
-
-  for (const auto &entry : fs::directory_iterator(targetDir)) {
-    if (entry.is_regular_file()) {
-      std::string filename = entry.path().filename().string();
-
-      bool allTokensFound = true;
-
-      // Check every token; if any are missing, it's not a match
-      for (const auto &token : searchTokens) {
-        if (filename.find(token) == std::string::npos) {
-          allTokensFound = false;
-          break; // No need to check other tokens for this file
-        }
-      }
-
-      if (allTokensFound) {
-        // std::cout << "Found match: " << filename << "\n";
-        matchingFiles.push_back(filename);
-      }
-    }
-  }
-  return matchingFiles;
-}
 
 int main(int argc, char *argv[]) {
   TApplication *fApp = new TApplication("fApp", NULL, NULL);

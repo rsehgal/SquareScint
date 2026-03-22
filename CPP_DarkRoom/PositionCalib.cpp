@@ -7,36 +7,7 @@
 #include <TApplication.h>
 #include <TTree.h>
 #include <TGraph.h>
-
-TF1* FitRestricted(TH1F* h) {
-    // 1. Initial "Guess" Fit
-    // This finds the approximate peak position and width
-    h->Fit("gaus", "Q"); // "Q" for quiet mode
-    
-    TF1 *initialFit = h->GetFunction("gaus");
-    double mean  = initialFit->GetParameter(1);
-    double sigma = initialFit->GetParameter(2);
-
-    // 2. Define the Restricted Fit
-    // Define a new Gaussian function with a specific range
-    double xMin = mean - sigma;
-    double xMax = mean + sigma;
-    
-    TF1 *finalFit = new TF1("finalFit", "gaus", xMin, xMax);
-    finalFit->SetLineColor(kRed);
-    finalFit->SetLineWidth(3);
-
-    // 3. Perform the second fit
-    // Use "R" to tell ROOT to use the range defined in the TF1
-    // Use "+" to keep the previous fit on the canvas if desired
-    h->Fit("finalFit", "Q");
-
-    printf("Final Mean: %.2f | Final Sigma: %.2f\n", 
-            finalFit->GetParameter(1), 
-            finalFit->GetParameter(2));
-
-   return finalFit;
-}
+#include "Helpers.h"
 
 int main(int argc, char *argv[])
 {

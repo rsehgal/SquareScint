@@ -77,12 +77,16 @@ target_link_libraries(writePairs ${ROOT_LIBRARIES})
 add_executable(InterBar InterBar.cpp)
 target_link_libraries(InterBar ${ROOT_LIBRARIES})
 
-add_executable(PositionCalib PositionCalib.cpp)
+add_executable(PositionCalib PositionCalib.cpp Helpers.cpp)
 target_link_libraries(PositionCalib ${ROOT_LIBRARIES})
 
-add_executable(PositionCalib_sq PositionCalib_sq.cpp)
+add_executable(PositionCalib_sq PositionCalib_sq.cpp Helpers.cpp)
 target_link_libraries(PositionCalib_sq ${ROOT_LIBRARIES})
 
-add_executable(UniformityCheck UniformityCheck.cpp)
+add_executable(PositionCalib_BothDir PositionCalib_BothDir.cpp Helpers.cpp)
+target_link_libraries(PositionCalib_BothDir ${ROOT_LIBRARIES})
+
+
+add_executable(UniformityCheck UniformityCheck.cpp Helpers.cpp)
 target_link_libraries(UniformityCheck ${ROOT_LIBRARIES})
 
