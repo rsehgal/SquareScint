@@ -28,6 +28,8 @@ extern HitSet slab;
 extern HitSet topBar;
 extern HitSet bottomBar;
 extern HitSet slabWithCylinder;
+extern HitSet slabWithCylinderAndStilbene;
+extern HitSet slabWithStilbene;
 extern HitSet slabWithTopBar;
 extern HitSet slabWithBottomBar;
 //extern HitSet slabWithBottomBar;
@@ -46,5 +48,5 @@ extern std::vector<FittedGraph> GetVectorOfParameterization(std::string searchDi
 //ROOT colors
 extern std::vector<int> color;
 
-extern FittedGraph CreateFittedGraph(std::vector<double> x, std::vector<double> y) ;
+extern FittedGraph CreateFittedGraph(std::vector<double> x, std::vector<double> y, std::string dirString="Test") ;
 #endif

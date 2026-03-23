@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
   TH2F *hist2d = new TH2F("delTMean", "delTMean", 100, -10000, 10000, 100, -10000, 10000);
   // std::string
   // searchDir="/home/muon/ExpData/Square_Bar1_Bar2_BG_12Mar/Mu_Slab/";
-  std::string searchDir =
-      "/Users/rsehgal/Codes/SquareScint/ExpData_DarkRoom/Slab_Cylinder/";
+  std::string searchDir = "/home/rsehgal/shared/SquareScint_DarkRoom/ExpData_DarkRoom/Slab_Cylinder/";
+  //    "/Users/rsehgal/Codes/SquareScint/ExpData_DarkRoom/Slab_Cylinder/";
   //std::vector<short> locationsVec = {-20, -10,0, 10, 20};
   std::vector<short> locationsVec = {0};
   std::vector<short> locVec = {-20, -10, 0, 10, 20}; // {0};
@@ -43,16 +43,25 @@ int main(int argc, char *argv[]) {
   short testIndex = 3;
   std::vector<Long64_t> testData;
 
-  std::vector<FittedGraph> parameterizationVec = GetVectorOfParameterization(searchDir,locationsVec,locVec,false);
-
-  canDelT->cd(1);
-  parameterizationVec[0].first->Draw("ap");
   TFile *fout =new TFile("calib.root","RECREATE");
+{
+  std::vector<FittedGraph> parameterizationVec = GetVectorOfParameterization(searchDir,locationsVec,locVec,true);
   fout->cd();
   parameterizationVec[0].first->Write();
   parameterizationVec[0].second->Write(); 
-  canDelT->Modified();
-  canDelT->Update();
+}
+{
+  std::vector<FittedGraph> parameterizationVec = GetVectorOfParameterization(searchDir,locationsVec,locVec,false);
+  fout->cd();
+  parameterizationVec[0].first->Write();
+  parameterizationVec[0].second->Write(); 
+}
+
+
+ /* canDelT->cd(1);
+  parameterizationVec[0].first->Draw("ap");*/
+  /*canDelT->Modified();
+  canDelT->Update();*/
   fout->Close();
   fApp->Run();
 }

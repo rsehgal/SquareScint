@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
 
   // std::string
   // searchDir="/home/muon/ExpData/Square_Bar1_Bar2_BG_12Mar/Mu_Slab/";
-  std::string searchDir =
-      "/Users/rsehgal/Codes/SquareScint/ExpData_DarkRoom/Slab_Cylinder/";
+  std::string searchDir ="/home/rsehgal/shared/SquareScint_DarkRoom/ExpData_DarkRoom/Slab_Cylinder/";
+  //    "/Users/rsehgal/Codes/SquareScint/ExpData_DarkRoom/Slab_Cylinder/";
   std::vector<short> locationsVec = {-20, -10, 0, 10, 20};
 
   for (unsigned int locIdX = 0; locIdX < locationsVec.size(); locIdX++) {

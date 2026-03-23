@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
     // std::vector<std::shared_ptr<Hit>> vec;
     ULong64_t ts = vecOfHits[i]->Timestamp;
-    if ((ts - start) < 50000)
+    if ((ts - start) < 500000)
       vec.push_back(vecOfHits[i]);
     else {
       // std::cout << "Inserting the event : Size : " << vec.size() << std::endl;
@@ -201,9 +201,11 @@ int main(int argc, char *argv[])
    // if (IsSubset(hs, slabWithTopAndBottomBar)) {
     //std::cout <<"Event found.........." << std::endl;
     //if (IsSubset(hs, OnlyTopAndBottomBar)) {
-    if (IsSubset(hs, slabWithCylinder)) {
+    //if (IsSubset(hs, slabWithCylinder)) {
+    //if (IsSubset(hs, slabWithCylinderAndStilbene)) {
+    //if (IsSubset(hs, slabWithStilbene)) {
     //if (IsSubset(hs, topBar) && !IsSubset(hs, slab)) {
-    //if (IsSubset(hs, slab)) {
+    if (IsSubset(hs, slab)) {
     //if (IsSubset(hs, topBar)) {
     //if (IsSubset(hs, darkRoomTopBar)) {
       q0 = 0;

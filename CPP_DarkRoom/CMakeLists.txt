@@ -90,3 +90,6 @@ target_link_libraries(PositionCalib_BothDir ${ROOT_LIBRARIES})
 add_executable(UniformityCheck UniformityCheck.cpp Helpers.cpp)
 target_link_libraries(UniformityCheck ${ROOT_LIBRARIES})
 
+add_executable(MuonFluxVariation MuonFluxVariation.cpp Helpers.cpp)
+target_link_libraries(MuonFluxVariation ${ROOT_LIBRARIES})
+
