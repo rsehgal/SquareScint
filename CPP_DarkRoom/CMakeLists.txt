@@ -28,34 +28,35 @@ add_executable(subtract subtract.cpp)
 target_link_libraries(subtract ${ROOT_LIBRARIES})
 
 add_executable(TestSet TestSet.cpp Helpers.cpp)
-target_link_libraries(TestSet ${ROOT_LIBRARIES})
+target_link_libraries(TestSet ${ROOT_LIBRARIES}  ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(ProcessData ProcessData.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(ProcessData ${ROOT_LIBRARIES})
+target_link_libraries(ProcessData ${ROOT_LIBRARIES}  ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(ProcessData2 ProcessData2.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(ProcessData2 ${ROOT_LIBRARIES})
+target_link_libraries(ProcessData2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(WaveAnal WaveAnal.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(WaveAnal ${ROOT_LIBRARIES})
+target_link_libraries(WaveAnal ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(ProcessDataWave ProcessDataWave.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES})
+target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(MuonDecay MuonDecay.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(MuonDecay ${ROOT_LIBRARIES})
+target_link_libraries(MuonDecay ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(MuonDecay2 MuonDecay2.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(MuonDecay2 ${ROOT_LIBRARIES})
+target_link_libraries(MuonDecay2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(MuonDecay_Bar MuonDecay_Bar.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(MuonDecay_Bar ${ROOT_LIBRARIES})
+target_link_libraries(MuonDecay_Bar ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(outMLExp outMLExp.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(outMLExp ${ROOT_LIBRARIES})
+target_link_libraries(outMLExp ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(outMLSim outMLSim.cpp Helpers.cpp Histograms.cpp)
-target_link_libraries(outMLSim ${ROOT_LIBRARIES})
+target_link_libraries(outMLSim ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
 
 
 ##########################
@@ -78,18 +79,27 @@ add_executable(InterBar InterBar.cpp)
 target_link_libraries(InterBar ${ROOT_LIBRARIES})
 
 add_executable(PositionCalib PositionCalib.cpp Helpers.cpp)
-target_link_libraries(PositionCalib ${ROOT_LIBRARIES})
+target_link_libraries(PositionCalib ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(PositionCalib_sq PositionCalib_sq.cpp Helpers.cpp)
-target_link_libraries(PositionCalib_sq ${ROOT_LIBRARIES})
+target_link_libraries(PositionCalib_sq ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit )
 
 add_executable(PositionCalib_BothDir PositionCalib_BothDir.cpp Helpers.cpp)
-target_link_libraries(PositionCalib_BothDir ${ROOT_LIBRARIES})
+target_link_libraries(PositionCalib_BothDir ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 
-add_executable(UniformityCheck UniformityCheck.cpp Helpers.cpp)
-target_link_libraries(UniformityCheck ${ROOT_LIBRARIES})
+add_executable(UniformityCheck UniformityCheck.cpp Helpers.cpp )
+target_link_libraries(UniformityCheck ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(MuonFluxVariation MuonFluxVariation.cpp Helpers.cpp)
-target_link_libraries(MuonFluxVariation ${ROOT_LIBRARIES})
+target_link_libraries(MuonFluxVariation ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(ApplyCalib ApplyCalib.cpp Helpers.cpp )
+target_link_libraries(ApplyCalib ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(ApplyCalib2D ApplyCalib2D.cpp Helpers.cpp )
+target_link_libraries(ApplyCalib2D ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(PositionCalib2D PositionCalib2D.cpp Helpers.cpp )
+target_link_libraries(PositionCalib2D ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 

@@ -22,6 +22,8 @@ namespace fs = std::filesystem;
 #include "TAxis.h"
 #include "TLine.h"
 
+short hours=4;
+
 void PlotNormalizedMuons(const std::vector<int>& counts) {
     int n = counts.size();
     std::vector<double> x(n), y(n), ex(n, 0.0), ey(n);
@@ -31,7 +33,7 @@ void PlotNormalizedMuons(const std::vector<int>& counts) {
     double mean = sum / n;
 
     for (int i = 0; i < n; ++i) {
-        x[i] =4*( i + 1); // Time bins (every 4 hours)
+        x[i] =hours*( i + 1); // Time bins (every 4 hours)
         
         // 2. Normalize: (Current - Mean) / Mean * 100
         y[i] = ((counts[i] - mean) / mean) * 100.0;
@@ -134,7 +136,7 @@ int main(int argc, char *argv[])
       ULong64_t del  = t4 - startTime;
       if (q_gm > 200) {
 
-        if (del < 14400e+12)
+        if (del < hours*3600e+12)
           {
             counter++;
           }
