@@ -103,3 +103,15 @@ target_link_libraries(ApplyCalib2D ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix
 add_executable(PositionCalib2D PositionCalib2D.cpp Helpers.cpp )
 target_link_libraries(PositionCalib2D ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(AccidentalCoincidences AccidentalCoincidences.cpp Helpers.cpp )
+target_link_libraries(AccidentalCoincidences ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(MuonFluxVariation_V2 MuonFluxVariation_V2.cpp Helpers.cpp)
+target_link_libraries(MuonFluxVariation_V2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(MuonFluxVariation_V3 MuonFluxVariation_V3.cpp Helpers.cpp)
+target_link_libraries(MuonFluxVariation_V3 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(MuonFluxVariation_V4 MuonFluxVariation_V4.cpp Helpers.cpp)
+target_link_libraries(MuonFluxVariation_V4 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
