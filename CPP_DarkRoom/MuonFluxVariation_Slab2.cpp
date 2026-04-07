@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
 
   Long64_t nbytes = 0;
   nbytes += ftree->GetEntry(0);
-  double avg_log      = (std::log(q4) + std::log(q5) + std::log(q6) + std::log(q7)) / 4.;
+  double avg_log      = (std::log(q0) + std::log(q1) + std::log(q2) + std::log(q3)) / 4.;
   double q_gm         = std::exp(avg_log);
-  ULong64_t startTime = t4;
+  ULong64_t startTime = t0;
   ULong64_t endTime   = 0;
 
   ULong64_t counter = 0;
@@ -132,10 +132,10 @@ int main(int argc, char *argv[])
     nbytes += ftree->GetEntry(i);
 
     double q_gm = 0.;
-    if (q4 > 0 && q5 > 0 && q6 > 0 && q7 > 0) {
-      double avg_log = (std::log(q4) + std::log(q5) + std::log(q6) + std::log(q7)) / 4.;
+    if (q0 > 0 && q1 > 0 && q2 > 0 && q3 > 0) {
+      double avg_log = (std::log(q0) + std::log(q1) + std::log(q2) + std::log(q3)) / 4.;
       q_gm           = std::exp(avg_log);
-      ULong64_t del  = t4 - startTime;
+      ULong64_t del  = t0 - startTime;
       if (q_gm > 200) {
 
         if (del < hours * 3600e+12) {
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
           timingCounter++;
           timingVec.push_back(timingCounter);
           muonVec.push_back(counter);
-          startTime = t4;
+          startTime = t0;
           std::cout << "DelT : " << del << " :: No. of Muons : " << counter << std::endl;
           counter = 0;
         }

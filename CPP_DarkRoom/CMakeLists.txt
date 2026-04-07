@@ -94,6 +94,9 @@ target_link_libraries(UniformityCheck ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Mat
 add_executable(MuonFluxVariation MuonFluxVariation.cpp Helpers.cpp)
 target_link_libraries(MuonFluxVariation ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(MuonFluxVariation_Slab2 MuonFluxVariation_Slab2.cpp Helpers.cpp)
+target_link_libraries(MuonFluxVariation_Slab2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
 add_executable(ApplyCalib ApplyCalib.cpp Helpers.cpp )
 target_link_libraries(ApplyCalib ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
@@ -114,4 +117,10 @@ target_link_libraries(MuonFluxVariation_V3 ${ROOT_LIBRARIES} ROOT::MathCore ROOT
 
 add_executable(MuonFluxVariation_V4 MuonFluxVariation_V4.cpp Helpers.cpp)
 target_link_libraries(MuonFluxVariation_V4 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(TestSensorData TestSensorData.cpp Helpers.cpp)
+target_link_libraries(TestSensorData ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(ReadWeatherData ReadWeatherData.cpp Helpers.cpp)
+target_link_libraries(ReadWeatherData ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 

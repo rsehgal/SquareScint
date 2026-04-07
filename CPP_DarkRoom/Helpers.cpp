@@ -30,11 +30,22 @@ std::string searchDir = "/home/rsehgal/shared/SquareScint_DarkRoom/ExpData_DarkR
 
 HitSet topBar            = {new Hit(0), new Hit(1)};
 HitSet bottomBar         = {new Hit(2), new Hit(3)};
+
+HitSet pmt4              = {new Hit(4)};
+HitSet pmt5              = {new Hit(5)};
+HitSet pmt6              = {new Hit(6)};
+HitSet pmt7              = {new Hit(7)};
+
+
 HitSet slab              = {new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+HitSet slab1              = {new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+HitSet slab2              = {new Hit(0), new Hit(1), new Hit(2), new Hit(3)};
 HitSet slabWithTopBar    = {new Hit(0), new Hit(1), new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
 HitSet slabWithBottomBar = {new Hit(2), new Hit(3), new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
 
 HitSet slabWithTopAndBottomBar = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
+                                  new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+HitSet bothSlabs = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
                                   new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
 
 HitSet OnlyTopAndBottomBar = {new Hit(1), new Hit(1), new Hit(2), new Hit(3)};

@@ -12,7 +12,8 @@
 #include <TColor.h>
 #include <memory>
 #include <utility>
-
+#include <algorithm>
+#include <numeric>
 class TH1F;
 class TF1;
 class TGraph;
@@ -41,9 +42,18 @@ extern std::string searchDir;
 extern bool EqualSets(const HitSet &s1, const HitSet &s2);
 extern bool IsSubset(const HitSet &superSet, const HitSet &subSet);
 extern HitSet VecOfHitsToHitSet(std::vector<Hit *> vec);
+
+extern HitSet pmt4;
+extern HitSet pmt5;
+extern HitSet pmt6;
+extern HitSet pmt7;
+
 extern HitSet slab;
+extern HitSet slab1;
+extern HitSet slab2;
 extern HitSet topBar;
 extern HitSet bottomBar;
+extern HitSet bothSlabs;
 extern HitSet slabWithCylinder;
 extern HitSet slabWithCylinderAndStilbene;
 extern HitSet slabWithStilbene;
@@ -74,6 +84,34 @@ extern std::vector<TH2F *> GetUnitCorrFactorHistVector(std::vector<short> locati
 extern TH2F *GetEntriesHist(std::vector<short> locationsVec);
 
 extern std::unique_ptr<Data> GetMeanValues(short xpos, short ypos);
-extern void PositionCalibration(const std::vector<std::unique_ptr<Data>>& vecOfData);
+extern void PositionCalibration(const std::vector<std::unique_ptr<Data>> &vecOfData);
+
+template<typename T>
+inline constexpr auto get_3pt_avg = [](const std::vector<T> &v, int i) {
+  int n   = v.size();
+  //int p   = (i == 0) ? n - 1 : i - 1;
+  int p   = (i == 0) ? i : i - 1;
+  //int nxt = (i == n - 1) ? 0 : i + 1;
+  int nxt = (i == n - 1) ? i : i + 1;
+  return (v[p] + v[i] + v[nxt]) / 3.0;
+};
+
+inline constexpr auto get_next_bin_mean = [](auto &it, const auto &end, double window_size) {
+  if (it == end) return 0.0;
+
+  // 1. Find the end of the time window using Binary Search (Fast!)
+  double limit = (*it) + window_size;
+  auto bin_end = std::upper_bound(it, end, limit);
+
+  // 2. Calculate the mean for this specific range
+  double sum  = std::accumulate(it, bin_end, 0.0);
+  long count  = std::distance(it, bin_end);
+  double mean = (count > 0) ? sum / count : 0.0;
+
+  // 3. Update the iterator to the start of the NEXT bin
+  it = bin_end;
+
+  return mean;
+};
 
 #endif

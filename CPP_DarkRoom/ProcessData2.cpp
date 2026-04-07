@@ -205,7 +205,10 @@ int main(int argc, char *argv[])
     //if (IsSubset(hs, slabWithCylinderAndStilbene)) {
     //if (IsSubset(hs, slabWithStilbene)) {
     //if (IsSubset(hs, topBar) && !IsSubset(hs, slab)) {
-    if (IsSubset(hs, slab)) {
+    //if (IsSubset(hs, slab)) {
+    if (IsSubset(hs, slab2)) {
+    //if (IsSubset(hs, bothSlabs)) {
+    //if (IsSubset(hs, slab2)  && !IsSubset(hs, pmt4) && !IsSubset(hs, pmt5) && !IsSubset(hs, pmt6)&& !IsSubset(hs, pmt7)){
     //if (IsSubset(hs, topBar)) {
     //if (IsSubset(hs, darkRoomTopBar)) {
       q0 = 0;
