@@ -88,7 +88,7 @@ std::vector<float> decayVec;
 thVec.push_back(qth);
 
   ///TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 2000, 0, 200);
-  TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, 40);
+  TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, 50);
   //UShort_t qth    = std::atoi(argv[2]);//0;//400;
 
   std::ofstream outfile("delT.txt");
@@ -128,8 +128,8 @@ thVec.push_back(qth);
           }
 
           // tDelay = (t4 + t5 + t6 + t7) / 4.;
-          if ((tDelay - tPrompt) < 200000000) {
-	    Long64_t delT=(tDelay - tPrompt) / 1000000.;
+          if ((tDelay - tPrompt) < 50000000) {
+	    double delT=1.*(tDelay - tPrompt) / 1000000.;
             histDecay->Fill(delT);
 	    outfile << delT << std::endl;
 	    
@@ -156,7 +156,10 @@ thVec.push_back(qth);
   histDecay->Fit(formu,"Q");
   std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
   decayVec.push_back(formu->GetParameter(1));
-
+  
+  TFile *fout = new TFile("decay.root","RECREATE");
+  histDecay->Write();
+  fout->Close();
 }
 /*  outfile.close();
   new TCanvas;
