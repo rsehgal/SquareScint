@@ -97,6 +97,9 @@ target_link_libraries(MuonFluxVariation ${ROOT_LIBRARIES} ROOT::MathCore ROOT::M
 add_executable(MuonFluxVariation_Slab2 MuonFluxVariation_Slab2.cpp Helpers.cpp)
 target_link_libraries(MuonFluxVariation_Slab2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(MuonDecay_Slab2 MuonDecay_Slab2.cpp Helpers.cpp)
+target_link_libraries(MuonDecay_Slab2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
 add_executable(ApplyCalib ApplyCalib.cpp Helpers.cpp )
 target_link_libraries(ApplyCalib ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 

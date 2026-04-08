@@ -88,7 +88,7 @@ std::vector<float> decayVec;
 thVec.push_back(qth);
 
   ///TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 2000, 0, 200);
-  TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, 20);
+  TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, 50);
   //UShort_t qth    = std::atoi(argv[2]);//0;//400;
 
   std::ofstream outfile("delT.txt");
@@ -96,15 +96,15 @@ thVec.push_back(qth);
   for (Long64_t i = 0; i < nentries; i++) {
     nbytes += ftree->GetEntry(i);
 
-    ULong64_t pmtTimingArr[4] = {t4, t5, t6, t7};
-    UShort_t pmtChargeArr[4]  = {q4, q5, q6, q7};
+    ULong64_t pmtTimingArr[4] = {t0, t1, t2, t3};
+    UShort_t pmtChargeArr[4]  = {q0, q1, q2, q3};
 
-    if (q4 > qth && q5 > qth && q6 > qth && q7 > qth) 
+    if (q0 > qth && q1 > qth && q2 > qth && q3 > qth) 
     {
-	Long64_t t45=t4-t5;
-	Long64_t t67=t6-t7;
+	Long64_t t45=t0-t1;
+	Long64_t t67=t2-t3;
       if (!prompt && abs(t45)<1000 && abs(t67) < 1000) {
-        tPrompt = t4;
+        tPrompt = t0;
         for (unsigned int j = 1; j < 4; j++) {
           if (pmtTimingArr[j] < tPrompt) tPrompt = pmtTimingArr[j];
         }
@@ -118,8 +118,8 @@ thVec.push_back(qth);
         //if (!delay && q4 > qthe && q5 > qthe && q6 > qthe && q7 > qthe) 
 	if(!delay)
 	{
-          tDelay = t4;
-          qStop  = q4;
+          tDelay = t0;
+          qStop  = q0;
           for (unsigned int j = 1; j < 4; j++) {
             if (pmtTimingArr[j] < tDelay) {
               tDelay = pmtTimingArr[j];
@@ -128,8 +128,8 @@ thVec.push_back(qth);
           }
 
           // tDelay = (t4 + t5 + t6 + t7) / 4.;
-          if ((tDelay - tPrompt) < 20000000) {
-	    double delT=1.*(tDelay - tPrompt) / 1000000.;
+          if ((tDelay - tPrompt) < 50000000) {
+	    Long64_t delT=1.*(tDelay - tPrompt) / 1000000.;
             histDecay->Fill(delT);
 	    outfile << delT << std::endl;
 	    
@@ -147,19 +147,16 @@ thVec.push_back(qth);
       // std::cout << t4 << " : " << t5 << " : " << t6 << " : " << t7 << std::endl;
     }
   }
-  TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0.4, 20);
+  TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0, 200);
   // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
-  formu->SetParameters(80, 2.2, 16);
+  formu->SetParameters(100, 2.2, 4);
 
   histDecay->SetMarkerStyle(8);
   histDecay->Draw("E1 P");
-  histDecay->Fit(formu,"R");
+  histDecay->Fit(formu,"Q");
   std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
   decayVec.push_back(formu->GetParameter(1));
-  
-  TFile *fout = new TFile("decay.root","RECREATE");
-  histDecay->Write();
-  fout->Close();
+
 }
 /*  outfile.close();
   new TCanvas;
