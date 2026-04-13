@@ -12,8 +12,24 @@
 int main(int argc, char *argv[])
 {
   TApplication *fApp = new TApplication("fApp", NULL, NULL);
-  TFile *f           = new TFile(argv[1]);
-  TTree *ftree       = (TTree *)f->Get("ftree");
+
+  TFile *fout    = new TFile("decay.root", "RECREATE");
+  TTree *outTree = new TTree("muonElectron", "A simple Muon decay tree");
+
+  UShort_t qMuon      = 6000;
+  UShort_t qElectron  = 6000;
+  ULong64_t tMuon     = 0;
+  ULong64_t tElectron = 0;
+  double delT         = -10.;
+
+  outTree->Branch("qMuon", &qMuon);
+  outTree->Branch("qElectron", &qElectron);
+  outTree->Branch("tMuon", &tMuon);
+  outTree->Branch("tElectron", &tElectron);
+  outTree->Branch("delT", &delT);
+
+  TFile *f     = new TFile(argv[1]);
+  TTree *ftree = (TTree *)f->Get("ftree");
 
   gStyle->SetOptFit(111);
   // Declaration of leaves types
@@ -78,114 +94,102 @@ int main(int argc, char *argv[])
   TH2F *histCorr = new TH2F("HistCorr", "HistCorr", 500, 0, 1000, 200, 0, 200);
   // TH2F *histCorr = new TH2F("HistCorr","HistCorr",50,0,0.2,200,0,200);
 
-std::vector<float> thVec;
-std::vector<float> decayVec;
+  std::vector<float> thVec;
+  std::vector<float> decayVec;
 
-// for(unsigned int m = 0 ; m < 50 ; m++)
-{
-	//UShort_t qth = 100+ 10*m;	
-	UShort_t qth = std::atoi(argv[2]) ;//410;// 300;	
-thVec.push_back(qth);
+  // for(unsigned int m = 0 ; m < 50 ; m++)
+  {
+    // UShort_t qth = 100+ 10*m;
+    UShort_t qth = std::atoi(argv[2]); // 410;// 300;
+    thVec.push_back(qth);
 
-  ///TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 2000, 0, 200);
-  TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, 20);
-  //UShort_t qth    = std::atoi(argv[2]);//0;//400;
+    int decayWindow = 20;
+    /// TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 2000, 0, 200);
+    TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, decayWindow);
+    // UShort_t qth    = std::atoi(argv[2]);//0;//400;
 
-  std::ofstream outfile("delT.txt");
+    std::ofstream outfile("delT.txt");
+    double qPromt = 1;
+    double qDelay = 1;
 
-  for (Long64_t i = 0; i < nentries; i++) {
-    nbytes += ftree->GetEntry(i);
+    for (Long64_t i = 0; i < nentries; i++) {
+      nbytes += ftree->GetEntry(i);
 
-    ULong64_t pmtTimingArr[4] = {t4, t5, t6, t7};
-    UShort_t pmtChargeArr[4]  = {q4, q5, q6, q7};
+      ULong64_t pmtTimingArr[4] = {t4, t5, t6, t7};
+      UShort_t pmtChargeArr[4]  = {q4, q5, q6, q7};
 
-    if (q4 > qth && q5 > qth && q6 > qth && q7 > qth) 
-    {
-	Long64_t t45=t4-t5;
-	Long64_t t67=t6-t7;
-      if (!prompt && abs(t45)<1000 && abs(t67) < 1000) {
-        tPrompt = t4;
-        for (unsigned int j = 1; j < 4; j++) {
-          if (pmtTimingArr[j] < tPrompt) tPrompt = pmtTimingArr[j];
-        }
-
-        // tPrompt = (t4 + t5 + t6 + t7) / 4.;
-        prompt = true;
-        delay  = false;
-
-      } else {
-	//UShort_t qthe=1000;
-        //if (!delay && q4 > qthe && q5 > qthe && q6 > qthe && q7 > qthe) 
-	if(!delay)
-	{
-          tDelay = t4;
-          qStop  = q4;
+      if (q4 > qth && q5 > qth && q6 > qth && q7 > qth) {
+        Long64_t t45 = t4 - t5;
+        Long64_t t67 = t6 - t7;
+        if (!prompt) { //} && abs(t45)<1000 && abs(t67) < 1000) {
+          tPrompt = t4;
+          tMuon   = tPrompt;
           for (unsigned int j = 1; j < 4; j++) {
-            if (pmtTimingArr[j] < tDelay) {
-              tDelay = pmtTimingArr[j];
-              qStop  = pmtChargeArr[j];
+            if (pmtTimingArr[j] < tPrompt) tPrompt = pmtTimingArr[j];
+          }
+
+          // tPrompt = (t4 + t5 + t6 + t7) / 4.;
+          prompt = true;
+          delay  = false;
+          qMuon  = std::pow((q4 * q5 * q6 * q7), 0.25);
+
+        } else {
+          // UShort_t qthe=1000;
+          // if (!delay && q4 > qthe && q5 > qthe && q6 > qthe && q7 > qthe)
+          if (!delay) {
+            tDelay = t4;
+            qStop  = q4;
+            for (unsigned int j = 1; j < 4; j++) {
+              if (pmtTimingArr[j] < tDelay) {
+                tDelay = pmtTimingArr[j];
+                qStop  = pmtChargeArr[j];
+              }
+            }
+
+            tElectron = tDelay;
+            qElectron = std::pow((q4 * q5 * q6 * q7), 0.25);
+
+            // tDelay = (t4 + t5 + t6 + t7) / 4.;
+            // if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6) && (qMuon > qElectron)) 
+            if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6) ) {
+              delT = 1. * (tDelay - tPrompt) / 1000000.;
+              histDecay->Fill(delT);
+              outfile << delT << std::endl;
+              outTree->Fill();
+
+              // std::cout << "Decay event found...." << std::endl;
+              delay  = true;
+              prompt = false;
+              decayEventCounter++;
+              // histCorr->Fill(1/sqrt(qStop),(tDelay - tPrompt)/1000000);
+              histCorr->Fill(qStop, (tDelay - tPrompt) / 1000000);
+            } else {
+              tPrompt = tDelay;
             }
           }
-
-          // tDelay = (t4 + t5 + t6 + t7) / 4.;
-          if ((tDelay - tPrompt) < 20000000) {
-	    double delT=1.*(tDelay - tPrompt) / 1000000.;
-            histDecay->Fill(delT);
-	    outfile << delT << std::endl;
-	    
-            // std::cout << "Decay event found...." << std::endl;
-            delay  = true;
-            prompt = false;
-            decayEventCounter++;
-            // histCorr->Fill(1/sqrt(qStop),(tDelay - tPrompt)/1000000);
-            histCorr->Fill(qStop, (tDelay - tPrompt) / 1000000);
-          } else {
-            tPrompt = tDelay;
-          }
         }
+        // std::cout << t4 << " : " << t5 << " : " << t6 << " : " << t7 << std::endl;
       }
-      // std::cout << t4 << " : " << t5 << " : " << t6 << " : " << t7 << std::endl;
     }
+    TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0.6, decayWindow);
+    // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
+    formu->SetParameters(80, 2.2, 16);
+
+    histDecay->SetMarkerStyle(8);
+    histDecay->Draw("E1 P");
+    histDecay->Fit(formu, "R");
+    std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
+    decayVec.push_back(formu->GetParameter(1));
+
+    fout->cd();
+    outTree->SetDirectory(fout);
+    outTree->Write();
+    histDecay->SetDirectory(fout);
+    histDecay->Write();
+    fout->Write();
+    fout->Close();
   }
-  TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0.4, 20);
-  // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
-  formu->SetParameters(80, 2.2, 16);
-
-  histDecay->SetMarkerStyle(8);
-  histDecay->Draw("E1 P");
-  histDecay->Fit(formu,"R");
-  std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
-  decayVec.push_back(formu->GetParameter(1));
-  
-  TFile *fout = new TFile("decay.root","RECREATE");
-  histDecay->Write();
-  fout->Close();
-}
-/*  outfile.close();
-  new TCanvas;
-  histCorr->Draw("colz");
-
-  new TCanvas;
-  TProfile *prof = histCorr->ProfileX();
-  prof->Draw();
-*/
-
-/*  TGraph *gr =new TGraph(thVec.size(),&thVec[0],&decayVec[0]);
-  gr->SetMarkerStyle(8);
-  gr->Draw("ap");
-*/
   std::cout << "Total number of decay event : " << decayEventCounter << std::endl;
 
-  /*new TCanvas;
-  histDecay->SetMarkerStyle(8);
-  histDecay->SetMarkerColor(1);
-  histDecay->Draw("E1 P");*/
-
-/*  TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0, 40);
-  // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
-  formu->SetParameters(100, 2.2, 0);
-  histDecay->Fit(formu);
-*/
- 
- fApp->Run();
+  fApp->Run();
 }
