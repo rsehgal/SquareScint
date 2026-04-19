@@ -1,0 +1,8 @@
+#
+
+#Steps to automate
+create two directories named OutDir and MacDir in your build directory
+
+Now change the shell script loop variable depending on
+the position of muon gun and run the script.
+
