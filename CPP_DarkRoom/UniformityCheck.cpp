@@ -94,5 +94,9 @@ int main(int argc, char *argv[])
   entriesHist->Draw("colz text");
 
   can->SaveAs("uniformity.eps");
+
+  TCanvas *forRep=new TCanvas("Uniformity", "Uniformity", 10, 10, 800,800);
+  uniformityHist_gm_og->Draw("colz text");
+  forRep->SaveAs("UniformityPlot_ForReport.eps");
   fApp->Run();
 }

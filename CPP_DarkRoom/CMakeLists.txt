@@ -45,6 +45,9 @@ target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Mat
 add_executable(MuonDecay MuonDecay.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(MuonDecay ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(MuonDecay_Diss MuonDecay_Diss.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(MuonDecay_Diss ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
 add_executable(MuonDecay2 MuonDecay2.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(MuonDecay2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
@@ -127,4 +130,6 @@ target_link_libraries(TestSensorData ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matr
 add_executable(ReadWeatherData ReadWeatherData.cpp Helpers.cpp)
 target_link_libraries(ReadWeatherData ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(MergeCompassFiles MergeCompassFiles.cpp Helpers.cpp)
+target_link_libraries(MergeCompassFiles ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
