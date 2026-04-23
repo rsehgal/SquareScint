@@ -1,0 +1,249 @@
+#include <TH1F.h>
+#include <TFile.h>
+#include <TApplication.h>
+#include <TCanvas.h>
+#include <TF1.h>
+#include <TTree.h>
+#include <TStyle.h>
+#include <TH2F.h>
+#include <TProfile.h>
+#include <fstream>
+#include <TGraph.h>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+
+struct CaptureData {
+  Short_t detId;
+  ULong64_t ts;
+
+  CaptureData(Short_t dId, ULong64_t tms) : detId(dId), ts(tms) {}
+  void Print() const { std::cout << "( DetId : " << detId << " : TS : " << ts << " )" << std::endl; }
+};
+
+int main(int argc, char *argv[])
+{
+  TApplication *fApp = new TApplication("fApp", NULL, NULL);
+
+  std::vector<CaptureData> vecOfHits;
+  // TFile *fout    = new TFile("decay.root", "RECREATE");
+  // TTree *outTree = new TTree("muonElectron", "A simple Muon decay tree");
+
+  UShort_t qMuon      = 6000;
+  UShort_t qElectron  = 6000;
+  ULong64_t tMuon     = 0;
+  ULong64_t tElectron = 0;
+  double delT         = -10.;
+
+  /*outTree->Branch("qMuon", &qMuon);
+  outTree->Branch("qElectron", &qElectron);
+  outTree->Branch("tMuon", &tMuon);
+  outTree->Branch("tElectron", &tElectron);
+  outTree->Branch("delT", &delT);
+*/
+  TFile *f     = new TFile(argv[1]);
+  TTree *ftree = (TTree *)f->Get("ftree");
+
+  gStyle->SetOptFit(111);
+  // Declaration of leaves types
+  //    vector<int>     qVec;
+  Short_t detId;
+  UShort_t q0;
+  UShort_t q1;
+  UShort_t q2;
+  UShort_t q3;
+  UShort_t q4;
+  UShort_t q5;
+  UShort_t q6;
+  UShort_t q7;
+  UShort_t q8;
+  ULong64_t t0;
+  ULong64_t t1;
+  ULong64_t t2;
+  ULong64_t t3;
+  ULong64_t t4;
+  ULong64_t t5;
+  ULong64_t t6;
+  ULong64_t t7;
+  ULong64_t t8;
+
+  // Set branch addresses.
+  //   ftree->SetBranchAddress("qVec",&qVec);
+  ftree->SetBranchAddress("detId", &detId);
+  ftree->SetBranchAddress("q0", &q0);
+  ftree->SetBranchAddress("q1", &q1);
+  ftree->SetBranchAddress("q2", &q2);
+  ftree->SetBranchAddress("q3", &q3);
+  ftree->SetBranchAddress("q4", &q4);
+  ftree->SetBranchAddress("q5", &q5);
+  ftree->SetBranchAddress("q6", &q6);
+  ftree->SetBranchAddress("q7", &q7);
+  ftree->SetBranchAddress("q8", &q8);
+  ftree->SetBranchAddress("t0", &t0);
+  ftree->SetBranchAddress("t1", &t1);
+  ftree->SetBranchAddress("t2", &t2);
+  ftree->SetBranchAddress("t3", &t3);
+  ftree->SetBranchAddress("t4", &t4);
+  ftree->SetBranchAddress("t5", &t5);
+  ftree->SetBranchAddress("t6", &t6);
+  ftree->SetBranchAddress("t7", &t7);
+  ftree->SetBranchAddress("t8", &t8);
+
+  //     This is the loop skeleton
+  //       To read only selected branches, Insert statements like:
+  // ftree->SetBranchStatus("*",0);  // disable all branches
+  // TTreePlayer->SetBranchStatus("branchname",1);  // activate branchname
+
+  Long64_t nentries = ftree->GetEntries();
+
+  Long64_t nbytes = 0;
+  bool prompt     = false;
+  bool delay      = false;
+
+  ULong64_t tPrompt = 0;
+  ULong64_t tDelay  = 0;
+  UShort_t qStop    = 0;
+
+  unsigned int decayEventCounter = 0;
+
+  TH2F *histCorr = new TH2F("HistCorr", "HistCorr", 500, 0, 1000, 200, 0, 200);
+  // TH2F *histCorr = new TH2F("HistCorr","HistCorr",50,0,0.2,200,0,200);
+
+  std::vector<float> thVec;
+  std::vector<float> decayVec;
+
+  int captureWindow = 20;
+  TH1F *histCapture = new TH1F("MuonCapture", "MuonCapture", 200, 0, captureWindow);
+  // for(unsigned int m = 0 ; m < 50 ; m++)
+  {
+    // UShort_t qth = 100+ 10*m;
+    UShort_t qth = std::atoi(argv[2]); // 410;// 300;
+    thVec.push_back(qth);
+
+    int decayWindow = 20;
+    /// TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 2000, 0, 200);
+    TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, decayWindow);
+    // UShort_t qth    = std::atoi(argv[2]);//0;//400;
+
+    std::ofstream outfile("delT.txt");
+    double qPromt = 1;
+    double qDelay = 1;
+
+    for (Long64_t i = 0; i < nentries; i++) {
+      nbytes += ftree->GetEntry(i);
+
+      ULong64_t pmtTimingArr[4] = {t4, t5, t6, t7};
+      UShort_t pmtChargeArr[4]  = {q4, q5, q6, q7};
+
+      if (detId == 0) vecOfHits.emplace_back(detId, t0);
+      if (detId == 1) vecOfHits.emplace_back(detId, t4);
+
+      if (detId == 1)
+        if (q4 > qth && q5 > qth && q6 > qth && q7 > qth) {
+          Long64_t t45 = t4 - t5;
+          Long64_t t67 = t6 - t7;
+          if (!prompt) { //} && abs(t45)<1000 && abs(t67) < 1000) {
+            tPrompt = t4;
+            tMuon   = tPrompt;
+            for (unsigned int j = 1; j < 4; j++) {
+              if (pmtTimingArr[j] < tPrompt) tPrompt = pmtTimingArr[j];
+            }
+
+            // tPrompt = (t4 + t5 + t6 + t7) / 4.;
+            prompt = true;
+            delay  = false;
+            qMuon  = std::pow((q4 * q5 * q6 * q7), 0.25);
+
+          } else {
+            // UShort_t qthe=1000;
+            // if (!delay && q4 > qthe && q5 > qthe && q6 > qthe && q7 > qthe)
+            if (!delay) {
+              tDelay = t4;
+              qStop  = q4;
+              for (unsigned int j = 1; j < 4; j++) {
+                if (pmtTimingArr[j] < tDelay) {
+                  tDelay = pmtTimingArr[j];
+                  qStop  = pmtChargeArr[j];
+                }
+              }
+
+              tElectron = tDelay;
+              qElectron = std::pow((q4 * q5 * q6 * q7), 0.25);
+
+              // tDelay = (t4 + t5 + t6 + t7) / 4.;
+              // if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6) && (qMuon > qElectron))
+              if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6)) {
+                delT = 1. * (tDelay - tPrompt) / 1000000.;
+                histDecay->Fill(delT);
+                outfile << delT << std::endl;
+                // outTree->Fill();
+
+                // std::cout << "Decay event found...." << std::endl;
+                delay  = true;
+                prompt = false;
+                decayEventCounter++;
+                // histCorr->Fill(1/sqrt(qStop),(tDelay - tPrompt)/1000000);
+                histCorr->Fill(qStop, (tDelay - tPrompt) / 1000000);
+              } else {
+                tPrompt = tDelay;
+              }
+            }
+          }
+          // std::cout << t4 << " : " << t5 << " : " << t6 << " : " << t7 << std::endl;
+        }
+    }
+    TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0.6, decayWindow);
+    // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
+    formu->SetParameters(80, 2.2, 16);
+
+    histDecay->SetMarkerStyle(8);
+    new TCanvas("MuonDecay", "MuonDecay");
+    histDecay->Draw("E1 P");
+    histDecay->Fit(formu, "R");
+    // std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
+    decayVec.push_back(formu->GetParameter(1));
+
+    /*fout->cd();
+    outTree->SetDirectory(fout);
+    outTree->Write();
+    histDecay->SetDirectory(fout);
+    histDecay->Write();
+    fout->Write();
+    fout->Close();*/
+  }
+  // std::cout << "Total number of decay event : " << decayEventCounter << std::endl;
+
+  std::cout << "============= Starting Capture analysis =============" << std::endl;
+  std::cout << "Size of Hit Vec  : " << vecOfHits.size() << std::endl;
+
+  auto it = vecOfHits.begin();
+
+  while (it != vecOfHits.end()) {
+
+    it = std::adjacent_find(it, vecOfHits.end(), [](const CaptureData &a, const CaptureData &b) {
+      ULong64_t dt = b.ts - a.ts;
+      //return ((a.detId == 0) && (b.detId == 1) && (dt > 50000) && (dt < 700000));
+      return ((a.detId == 1) && (b.detId == 1) &&  (dt < 20000000));
+    });
+
+    if (it != vecOfHits.end()) {
+      ULong64_t capDelT = 1.*((it + 1)->ts - it->ts);
+      std::cout << "--------------------------------------" << std::endl;
+      it->Print();
+      (it + 1)->Print();
+      std::cout << "CaptureDelT : " << capDelT << std::endl;
+      histCapture->Fill(capDelT/1000000.);
+
+      if (std::distance(it, vecOfHits.end()) >= 2) {
+        std::advance(it, 2);
+      } else {
+        break;
+      }
+    }
+  }
+
+  new TCanvas("MuonCapture", "MuonCapture");
+  histCapture->Draw("E1 P");
+
+  fApp->Run();
+}

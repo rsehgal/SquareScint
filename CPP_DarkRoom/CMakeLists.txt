@@ -36,6 +36,9 @@ target_link_libraries(ProcessData ${ROOT_LIBRARIES}  ROOT::MathCore ROOT::Matrix
 add_executable(ProcessData2 ProcessData2.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(ProcessData2 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(ProcessData3 ProcessData3.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(ProcessData3 ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
 add_executable(WaveAnal WaveAnal.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(WaveAnal ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
@@ -44,6 +47,9 @@ target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Mat
 
 add_executable(MuonDecay MuonDecay.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(MuonDecay ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
+add_executable(MuonCapture MuonCapture.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(MuonCapture ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
 add_executable(MuonDecay_Diss MuonDecay_Diss.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(MuonDecay_Diss ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
