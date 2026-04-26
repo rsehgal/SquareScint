@@ -5,7 +5,10 @@ class G4Run;
 
 #include "G4UserRunAction.hh"
 #include "G4Event.hh"
+#include <vector>
+
 class MuonDecay_RunAction : public G4UserRunAction {
+    std::vector<double> fPulse;
 public:
     MuonDecay_RunAction();
     virtual ~MuonDecay_RunAction();

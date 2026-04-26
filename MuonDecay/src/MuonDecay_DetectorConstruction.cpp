@@ -8,6 +8,7 @@
 #include "G4SystemOfUnits.hh"
 #include "MuonDecay_SensitiveDetector.h"
 #include "OpticalHelpers.h"
+#include "MuonDecay_PMT_SD.h"
 
 MuonDecay_DetectorConstruction::MuonDecay_DetectorConstruction() {}
 
@@ -67,8 +68,10 @@ G4VPhysicalVolume *MuonDecay_DetectorConstruction::Construct() {
   // Logic to Attach sensitive detector to a logical volume
   // MuonDecay_SensitiveDetector* detector = new
   // MuonDecay_SensitiveDetector("SensitiveDetector");
-  // G4SDManager::GetSDMpointer()->AddNewDetector(detector);
-  // logicWorld->SetSensitiveDetector(detector);
+
+  MuonDecay_PMT_SD *detector = new MuonDecay_PMT_SD("PMT","PMT_Collection");
+  G4SDManager::GetSDMpointer()->AddNewDetector(detector);
+  logicalPMT->SetSensitiveDetector(detector);
 
   return physWorld;
 }
