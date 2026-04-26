@@ -3,7 +3,10 @@
 
 #include "G4UserEventAction.hh"
 #include "G4Event.hh"
+#include <vector>
+
 class MuonDecay_EventAction : public G4UserEventAction {
+    std::vector<std::vector<double>> fVecOfPulses; 
 public:
     MuonDecay_EventAction();
     virtual ~MuonDecay_EventAction();
