@@ -22,6 +22,6 @@ void MuonDecay_ActionInitialization::Build() const {
     //SetUserAction(new MuonDecay_EventAction);
 
     //Granular Control (Optional)
-    SetUserAction(new MuonDecay_SteppingAction());
+    //SetUserAction(new MuonDecay_SteppingAction());
     //SetUserAction(new MuonDecay_TrackingAction());
 }

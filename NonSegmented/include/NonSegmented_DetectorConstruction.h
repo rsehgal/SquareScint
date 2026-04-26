@@ -13,10 +13,10 @@ public:
     virtual ~NonSegmented_DetectorConstruction();
 
     virtual G4VPhysicalVolume* Construct();
-    void AttachOpticalProperties(G4Material *scintMat);
-    G4OpticalSurface* GetOpticalSurface();
+    //void AttachOpticalProperties(G4Material *scintMat);
+    //G4OpticalSurface* GetOpticalSurface();
     G4LogicalVolume* GetPMT();
-    G4OpticalSurface* GetInterfacingSurface();
+    //G4OpticalSurface* GetInterfacingSurface();
 };
 
 #endif

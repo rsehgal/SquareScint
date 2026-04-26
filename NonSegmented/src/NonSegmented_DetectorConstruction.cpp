@@ -12,30 +12,11 @@
 #include "G4LogicalBorderSurface.hh"
 #include "NonSegmented_PMT_SD.h"
 #include "NonSegmented_Slab_SD.h"
+#include "OpticalHelpers.h"
 
 NonSegmented_DetectorConstruction::NonSegmented_DetectorConstruction() {}
 
 NonSegmented_DetectorConstruction::~NonSegmented_DetectorConstruction() {}
-
-G4OpticalSurface *NonSegmented_DetectorConstruction::GetOpticalSurface()
-{
-  // Define optical surface for side reflection
-  G4OpticalSurface *surfaceCrystal = new G4OpticalSurface("CrystalSurface");
-  surfaceCrystal->SetModel(unified);
-  surfaceCrystal->SetType(dielectric_dielectric);
-  surfaceCrystal->SetFinish(groundfrontpainted); // or polished
-
-  // Reflective properties
-  G4MaterialPropertiesTable *mptSurface = new G4MaterialPropertiesTable();
-  const G4int num                       = 2;
-  G4double ephoton[num]                 = {1.5 * eV, 3.5 * eV};
-  G4double reflectivity[num]            = {1.0, 1.0};
-  G4double efficiency[num]              = {1.0, 1.0};
-  mptSurface->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
-  mptSurface->AddProperty("EFFICIENCY", ephoton, efficiency, num);
-  surfaceCrystal->SetMaterialPropertiesTable(mptSurface);
-  return surfaceCrystal;
-}
 
 G4LogicalVolume *NonSegmented_DetectorConstruction::GetPMT()
 {
@@ -56,55 +37,6 @@ G4LogicalVolume *NonSegmented_DetectorConstruction::GetPMT()
   return logicPMT;
 }
 
-G4OpticalSurface* NonSegmented_DetectorConstruction::GetInterfacingSurface(){
-// Define interface between crystal and PMT — allow transmission
-  G4OpticalSurface *crystalToPMTSurface = new G4OpticalSurface("CrystalToPMT");
-  crystalToPMTSurface->SetType(dielectric_dielectric);
-  crystalToPMTSurface->SetModel(unified);
-  crystalToPMTSurface->SetFinish(polished);
-
-  // Perfect transmission (no reflectivity)
-  const int nEntries = 2;
-  G4MaterialPropertiesTable *mptInterface = new G4MaterialPropertiesTable();
-  G4double ephoton[nEntries]                 = {1.5 * eV, 3.5 * eV};
-  G4double reflectivity_zero[nEntries]         = {1., 1.};
-  G4double eff_pmt[nEntries]                   = {0.35,0.35};
-  mptInterface->AddProperty("REFLECTIVITY", ephoton, reflectivity_zero, nEntries);
-  mptInterface->AddProperty("EFFICIENCY", ephoton, eff_pmt, nEntries);
-  crystalToPMTSurface->SetMaterialPropertiesTable(mptInterface);
-  return crystalToPMTSurface;
-}
-
-void NonSegmented_DetectorConstruction::AttachOpticalProperties(G4Material *scintMat)
-{
-
-  const G4int nEntries            = 2;
-  G4double photonEnergy[nEntries] = {1.5 * eV, 3.5 * eV};
-
-  // Refractive index
-  G4double rIndex[nEntries] = {1.8, 1.8};
-
-  // Absorption length (how far photons travel before being absorbed)
-  G4double absorption[nEntries] = {350 * cm, 350 * cm};
-
-  // Scintillation emission spectrum (uniform for simplicity)
-  G4double scintSpectrum[nEntries] = {1.0, 1.0};
-
-  G4MaterialPropertiesTable *mptCrystal = new G4MaterialPropertiesTable();
-  mptCrystal->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
-  mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
-  mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
-  mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
-  mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV);
-  mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
-  //mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 2.1 * ns);
-  mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 0.9 * ns);
-  //mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 10. * ns);
-  mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 5 * ns);
-
-  scintMat->SetMaterialPropertiesTable(mptCrystal);
-}
-
 G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
 {
   G4NistManager *nist  = G4NistManager::Instance();
@@ -116,10 +48,7 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
   G4LogicalVolume *logicWorld  = new G4LogicalVolume(solidWorld, worldMat, "World");
   G4VPhysicalVolume *physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0);
 
-  G4Material *scintMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-  AttachOpticalProperties(scintMat);
-
-  G4OpticalSurface *opticalSurface = GetOpticalSurface();
+  //G4OpticalSurface *opticalSurface = GetOpticalSurface();
 
   // TODO : Create your desired detectors here
 #ifdef SCINTBAR
@@ -127,8 +56,11 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
 #else
   G4Box *scintSlab                  = new G4Box("ScintSlab", 25 * cm, 2.5 * cm, 25 * cm);
 #endif
+
+  G4Material *scintMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  AttachOpticalProperties(scintMat);
   G4LogicalVolume *scintSlabLogical = new G4LogicalVolume(scintSlab, scintMat, "LogicalScintSlab");
-  new G4LogicalSkinSurface("ReflectiveWrapping", scintSlabLogical, opticalSurface);
+  AddReflectiveWrapping(scintSlabLogical);
 
   G4VPhysicalVolume *physicalSlab = new G4PVPlacement(nullptr, G4ThreeVector(), scintSlabLogical, "PhysicalScintSlab", logicWorld, false, 0, true);
 
@@ -146,12 +78,15 @@ rotY90->rotateY(90.*deg);
 #endif
     
   G4OpticalSurface *interfacingSurface = GetInterfacingSurface();
-  new G4LogicalBorderSurface("SlabToPMT_Surface1",physicalSlab,physicalPMT1,interfacingSurface);
-  new G4LogicalBorderSurface("SlabToPMT_Surface3",physicalSlab,physicalPMT3,interfacingSurface);
-
+  //new G4LogicalBorderSurface("SlabToPMT_Surface1",physicalSlab,physicalPMT1,interfacingSurface);
+  //new G4LogicalBorderSurface("SlabToPMT_Surface3",physicalSlab,physicalPMT3,interfacingSurface);
+  AddOpticalGreaseBetweenVolumes("SlabToPMT_Surface1",physicalSlab,physicalPMT1);
+  AddOpticalGreaseBetweenVolumes("SlabToPMT_Surface3",physicalSlab,physicalPMT3);
 #ifndef SCINTBAR
-  new G4LogicalBorderSurface("SlabToPMT_Surface2",physicalSlab,physicalPMT2,interfacingSurface);
-  new G4LogicalBorderSurface("SlabToPMT_Surface4",physicalSlab,physicalPMT4,interfacingSurface);
+  AddOpticalGreaseBetweenVolumes("SlabToPMT_Surface2",physicalSlab,physicalPMT2);
+  AddOpticalGreaseBetweenVolumes("SlabToPMT_Surface4",physicalSlab,physicalPMT4);
+  //new G4LogicalBorderSurface("SlabToPMT_Surface2",physicalSlab,physicalPMT2,interfacingSurface);
+  //new G4LogicalBorderSurface("SlabToPMT_Surface4",physicalSlab,physicalPMT4,interfacingSurface);
 #endif
 
   // Logic to Attach sensitive detector to a logical volume
