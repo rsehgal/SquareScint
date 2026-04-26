@@ -19,7 +19,7 @@ void MuonDecay_ActionInitialization::Build() const {
 
     //Data Management (Recommended)
     //SetUserAction(new MuonDecay_RunAction);
-    //SetUserAction(new MuonDecay_EventAction);
+    SetUserAction(new MuonDecay_EventAction);
 
     //Granular Control (Optional)
     //SetUserAction(new MuonDecay_SteppingAction());

@@ -32,9 +32,10 @@ G4bool MuonDecay_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *) {
 }
 
 void MuonDecay_PMT_SD::EndOfEvent(G4HCofThisEvent *hce) {
-
+#if(0)
   for (unsigned int i = 0; i < fPMTHitCollection->entries(); i++) {
     MuonDecay_PMT_Hit *hit = (*fPMTHitCollection)[i];
     hit->Print();
   }
+#endif
 }
