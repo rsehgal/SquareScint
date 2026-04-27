@@ -13,6 +13,10 @@ void MuonDecay_RunAction::BeginOfRunAction(const G4Run *)
   analMan->CreateNtupleDColumn("Channel");
   analMan->CreateNtupleDColumn("Samples", fPulse);
   analMan->FinishNtuple();
+
+  analMan->CreateNtuple("Decay","A simple decay tree");
+  analMan->CreateNtupleDColumn("delT");
+  analMan->FinishNtuple();
 }
 
 void MuonDecay_RunAction::EndOfRunAction(const G4Run *)

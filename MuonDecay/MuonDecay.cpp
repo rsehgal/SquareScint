@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   runManager->SetUserInitialization(new MuonDecay_DetectorConstruction());
   G4OpticalPhysics *opticalPhysics = new G4OpticalPhysics;
   G4VModularPhysicsList *physicsList = new QGSP_BERT;
-  physicsList->RegisterPhysics(opticalPhysics);
+  //physicsList->RegisterPhysics(opticalPhysics);
   runManager->SetUserInitialization(physicsList);
 
   runManager->SetUserInitialization(new MuonDecay_ActionInitialization());

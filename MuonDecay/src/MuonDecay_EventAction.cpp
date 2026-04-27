@@ -34,7 +34,7 @@ void MuonDecay_EventAction::EndOfEventAction(const G4Event *event)
 
   for (unsigned int i = 0; i < pmtHitCollection->entries(); i++) {
     MuonDecay_PMT_Hit *hit = (*pmtHitCollection)[i];
-    hit->Print();
+    //hit->Print();
     fVecOfPulses[hit->GetChannelNum()].push_back(hit->GetTimestamp());
   }
 
@@ -49,7 +49,7 @@ void MuonDecay_EventAction::EndOfEventAction(const G4Event *event)
     }
   }
 
-  for (auto pulse : fVecOfPulses) {
+  /*for (auto pulse : fVecOfPulses) {
     if (pulse.size() > 0) std::cout << "Pulse size : " << pulse.size() << std::endl;
-  }
+  }*/
 }
