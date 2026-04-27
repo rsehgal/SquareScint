@@ -4,6 +4,8 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 
+class CryInterface;
+
 class MuonDecay_PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 public:
     MuonDecay_PrimaryGeneratorAction();
@@ -12,6 +14,7 @@ public:
     virtual void GeneratePrimaries(G4Event* anEvent);
 public:
     G4ParticleGun *fParticleGun;
+    CryInterface *cryInterface; 
 };
 
 #endif
