@@ -14,6 +14,8 @@ public:
     virtual ~MuonDecay_RunAction();
     virtual void BeginOfRunAction(const G4Run*);
     virtual void EndOfRunAction(const G4Run*);
+    std::vector<double> GetPulseVector() const;
+    void FillPulseVector(std::vector<double> pulse);
 };
 
 #endif
