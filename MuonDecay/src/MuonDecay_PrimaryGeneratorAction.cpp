@@ -1,5 +1,9 @@
 #include "MuonDecay_PrimaryGeneratorAction.h"
+
+#ifdef USE_CRY
 #include "CryInterface.h"
+#endif
+
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
 #include "G4SystemOfUnits.hh"
@@ -47,7 +51,7 @@ void MuonDecay_PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent) {
   dir.set(muon->angleX, muon->angleY, muon->angleZ);
   dir = dir.unit();
 #else
-  fParticleGun->SetParticleEnergy(2 * GeV);
+  fParticleGun->SetParticleEnergy(20 * MeV);
   dir = (end - start).unit();
 #endif
 

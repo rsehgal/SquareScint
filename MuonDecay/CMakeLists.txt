@@ -40,7 +40,7 @@ add_executable(${PROJECT_NAME} ${SOURCES} MuonDecay.cpp)
 if(USE_CRY)
 target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} cryInterface)
 else()
-target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} cryInterface)
+target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} )
 endif(USE_CRY)
 
 # Set C++ standard
