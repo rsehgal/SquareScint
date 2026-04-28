@@ -1,6 +1,8 @@
 #include "MuonDecay_RunAction.h"
 #include "G4AnalysisManager.hh"
 #include "G4Run.hh"
+#include "MuonDecay_PrimaryGeneratorAction.h"
+
 MuonDecay_RunAction::MuonDecay_RunAction() {}
 
 MuonDecay_RunAction::~MuonDecay_RunAction() {}
@@ -24,6 +26,9 @@ void MuonDecay_RunAction::EndOfRunAction(const G4Run *)
   G4AnalysisManager *analMan = G4AnalysisManager::Instance();
   analMan->Write();
   analMan->CloseFile();
+
+  std::cout <<"MuPlus : " << MuonDecay_PrimaryGeneratorAction::muplus << std::endl;
+  std::cout <<"MuMinu : " << MuonDecay_PrimaryGeneratorAction::muminus << std::endl;
 }
 
 std::vector<double> MuonDecay_RunAction::GetPulseVector() const

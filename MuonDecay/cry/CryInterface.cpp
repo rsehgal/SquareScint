@@ -46,7 +46,7 @@ Muon *CryInterface::SampleMuon()
   for (unsigned j = 0; j < fEv->size(); j++) {
     CRYParticle *p = (*fEv)[j];
     if (std::string(CRYUtils::partName(p->id())) == "muon") {
-      fMuon->Set(p->u(), p->w(), p->v(), p->ke());
+      fMuon->Set(p->u(), p->w(), p->v(), p->ke(),p->t(),p->PDGid());
       break;
     }
   }

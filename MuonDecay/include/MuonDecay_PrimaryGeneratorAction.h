@@ -15,6 +15,9 @@ public:
 public:
     G4ParticleGun *fParticleGun;
     CryInterface *cryInterface; 
+public:
+    static int muplus;
+    static int muminus;
 };
 
 #endif

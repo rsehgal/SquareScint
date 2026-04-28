@@ -4,7 +4,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
 #include "G4AnalysisManager.hh"
-
+#include "G4VProcess.hh"
 MuonDecay_Scint_SD::MuonDecay_Scint_SD(const G4String &name, const G4String &collName) : G4VSensitiveDetector(name)
 {
   collectionName.insert(collName);
@@ -41,17 +41,24 @@ G4bool MuonDecay_Scint_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
     }*/
 
   // If it's the resulting electron moving
-  
+
   G4AnalysisManager *analMan = G4AnalysisManager::Instance();
 
-  if ((particleName == "e-" || particleName == "e+") && track->GetParentID() == 1 &&
+  G4String creatorProcess = "";
+  if (track->GetCreatorProcess()) {
+    creatorProcess = track->GetCreatorProcess()->GetProcessName();
+  }
+
+  if ((particleName == "e-" || particleName == "e+") && track->GetParentID() == 1 && creatorProcess=="Decay" && 
       track->GetCurrentStepNumber() == 1) {
     if (energy > 5 * MeV) {
       G4double t_decay = track->GetGlobalTime();
-      /*std::cout << "SEHGAL ELECTRON CREATED/MOVING AT: " << t_decay << " ns"
+      // G4double t_decay = track->GetLocalTime();
+     /* std::cout << "SEHGAL ELECTRON CREATED/MOVING AT: " << t_decay << " ns"
                 << " : TrackID : " << track->GetTrackID() << " : ParentID : " << track->GetParentID() << std::endl;*/
-     analMan->FillNtupleDColumn(1,0,track->GetGlobalTime()/1000.);
-     analMan->AddNtupleRow(1);
+      analMan->FillNtupleDColumn(1, 0, track->GetGlobalTime() / 1000.);
+      // analMan->FillNtupleDColumn(1,0,t_decay);
+      analMan->AddNtupleRow(1);
     }
   }
   return true;
