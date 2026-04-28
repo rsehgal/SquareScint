@@ -6,7 +6,10 @@
 #include "MuonDecay_HitCollections.h"
 
 class MuonDecay_Scint_SD : public G4VSensitiveDetector {
+public:
     Scint_HitCollection *fScintHitCollection;
+    static int survivedMuPlus;
+    static int survivedMuMinus;
 public:
     MuonDecay_Scint_SD(const G4String& name, const G4String &collName);
     virtual ~MuonDecay_Scint_SD();

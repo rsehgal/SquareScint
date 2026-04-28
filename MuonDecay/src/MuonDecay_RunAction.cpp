@@ -2,6 +2,7 @@
 #include "G4AnalysisManager.hh"
 #include "G4Run.hh"
 #include "MuonDecay_PrimaryGeneratorAction.h"
+#include "MuonDecay_Scint_SD.h"
 
 MuonDecay_RunAction::MuonDecay_RunAction() {}
 
@@ -11,12 +12,12 @@ void MuonDecay_RunAction::BeginOfRunAction(const G4Run *)
 {
   G4AnalysisManager *analMan = G4AnalysisManager::Instance();
   analMan->OpenFile("output.root");
-  analMan->CreateNtuple("ftree","A DAQ tree");
+  analMan->CreateNtuple("ftree", "A DAQ tree");
   analMan->CreateNtupleDColumn("Channel");
   analMan->CreateNtupleDColumn("Samples", fPulse);
   analMan->FinishNtuple();
 
-  analMan->CreateNtuple("Decay","A simple decay tree");
+  analMan->CreateNtuple("Decay", "A simple decay tree");
   analMan->CreateNtupleDColumn("delT");
   analMan->FinishNtuple();
 }
@@ -27,8 +28,12 @@ void MuonDecay_RunAction::EndOfRunAction(const G4Run *)
   analMan->Write();
   analMan->CloseFile();
 
-  std::cout <<"MuPlus : " << MuonDecay_PrimaryGeneratorAction::muplus << std::endl;
-  std::cout <<"MuMinu : " << MuonDecay_PrimaryGeneratorAction::muminus << std::endl;
+  std::cout << "MuPlus : " << MuonDecay_PrimaryGeneratorAction::muplus << std::endl;
+  std::cout << "MuMinu : " << MuonDecay_PrimaryGeneratorAction::muminus << std::endl;
+
+  std::cout << "--------------------------------------" << std::endl;
+  std::cout << "Survived Muplus : " << MuonDecay_Scint_SD::survivedMuPlus << std::endl;
+  std::cout << "Survived MuMinus : " << MuonDecay_Scint_SD::survivedMuMinus << std::endl;
 }
 
 std::vector<double> MuonDecay_RunAction::GetPulseVector() const

@@ -27,6 +27,16 @@ G4VPhysicalVolume *MuonDecay_DetectorConstruction::Construct() {
       nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0);
 
   // TODO : Create your desired detectors here
+G4Material *Fe =
+      nist->FindOrBuildMaterial("G4_Fe");
+  G4Box *ironSlab = new G4Box("IronSlab", 25 * cm, 1.5 * cm, 25 * cm);
+  G4LogicalVolume *logicalIronSlab =
+      new G4LogicalVolume(ironSlab, Fe, "LogicalIronSlab");
+  G4VPhysicalVolume *physicalIronSlab =
+      new G4PVPlacement(nullptr, G4ThreeVector(0.,6.*cm,0.), logicalIronSlab,
+                        "PhysicalIronSlab", logicWorld, false, 0, true);
+
+
 
   G4Material *scintMat =
       nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
