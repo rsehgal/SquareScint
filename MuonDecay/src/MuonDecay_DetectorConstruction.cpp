@@ -29,17 +29,29 @@ G4VPhysicalVolume *MuonDecay_DetectorConstruction::Construct() {
   // TODO : Create your desired detectors here
 G4Material *Fe =
       nist->FindOrBuildMaterial("G4_Fe");
-  G4Box *ironSlab = new G4Box("IronSlab", 25 * cm, 1.5 * cm, 25 * cm);
+  G4Box *ironSlab = new G4Box("IronSlab", 25 * cm, 0.5 * cm, 25 * cm);
   G4LogicalVolume *logicalIronSlab =
       new G4LogicalVolume(ironSlab, Fe, "LogicalIronSlab");
-  G4VPhysicalVolume *physicalIronSlab =
+ /* G4VPhysicalVolume *physicalIronSlab =
       new G4PVPlacement(nullptr, G4ThreeVector(0.,6.*cm,0.), logicalIronSlab,
                         "PhysicalIronSlab", logicWorld, false, 0, true);
-
+*/
 
 
   G4Material *scintMat =
       nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  AttachOpticalProperties(scintMat);
+
+//Top scintillator
+G4Box *topScint = new G4Box("TopScintillator", 25 * cm, 0.5 * cm, 25 * cm);
+  G4LogicalVolume *logicalTopScintillator =
+      new G4LogicalVolume(topScint, scintMat, "LogicalTopScintillator");
+  AddReflectiveWrapping(logicalTopScintillator);
+/*  G4VPhysicalVolume *physicalTopScintillator =
+      new G4PVPlacement(nullptr, G4ThreeVector(0,9.*cm,0.), logicalTopScintillator,
+                        "PhysicalTopScintillator", logicWorld, false, 50, true);
+*/
+
   G4Box *scint = new G4Box("Scintillator", 25 * cm, 3 * cm, 25 * cm);
   AttachOpticalProperties(scintMat);
   G4LogicalVolume *logicalScintillator =
@@ -47,46 +59,47 @@ G4Material *Fe =
   AddReflectiveWrapping(logicalScintillator);
   G4VPhysicalVolume *physicalScintillator =
       new G4PVPlacement(nullptr, G4ThreeVector(), logicalScintillator,
-                        "PhysicalScintillator", logicWorld, false, 0, true);
+                        "PhysicalScintillator", logicWorld, false, 51, true);
 
   G4LogicalVolume *logicalPMT = GetPMT();
-  G4VPhysicalVolume *physicalPMT1 =
+  G4VPhysicalVolume *physicalPMT4 =
       new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 29 * cm), logicalPMT,
-                        "PhysicalPMT", logicWorld, false, 0, true);
-  G4VPhysicalVolume *physicalPMT2 =
+                        "PhysicalPMT4", logicWorld, false, 4, true);
+  G4VPhysicalVolume *physicalPMT5 =
       new G4PVPlacement(nullptr, G4ThreeVector(0., 0., -29 * cm), logicalPMT,
-                        "PhysicalPMT", logicWorld, false, 1, true);
+                        "PhysicalPMT5", logicWorld, false, 5, true);
 
   G4RotationMatrix *rotY90 = new G4RotationMatrix();
   rotY90->rotateY(90. * deg);
 
-  G4VPhysicalVolume *physicalPMT3 =
+  G4VPhysicalVolume *physicalPMT6 =
       new G4PVPlacement(rotY90, G4ThreeVector(29. * cm, 0., 0), logicalPMT,
-                        "PhysicalPMT", logicWorld, false, 2, true);
-  G4VPhysicalVolume *physicalPMT4 =
+                        "PhysicalPMT6", logicWorld, false, 6, true);
+  G4VPhysicalVolume *physicalPMT7 =
       new G4PVPlacement(rotY90, G4ThreeVector(-29. * cm, 0., 0.), logicalPMT,
-                        "PhysicalPMT", logicWorld, false, 3, true);
+                        "PhysicalPMT7", logicWorld, false, 7, true);
 
-  AddOpticalGreaseBetweenVolumes("Scint_PMT1", physicalScintillator,
-                                 physicalPMT1);
-  AddOpticalGreaseBetweenVolumes("Scint_PMT2", physicalScintillator,
-                                 physicalPMT2);
-  AddOpticalGreaseBetweenVolumes("Scint_PMT3", physicalScintillator,
-                                 physicalPMT3);
   AddOpticalGreaseBetweenVolumes("Scint_PMT4", physicalScintillator,
                                  physicalPMT4);
+  AddOpticalGreaseBetweenVolumes("Scint_PMT5", physicalScintillator,
+                                 physicalPMT5);
+  AddOpticalGreaseBetweenVolumes("Scint_PMT6", physicalScintillator,
+                                 physicalPMT6);
+  AddOpticalGreaseBetweenVolumes("Scint_PMT7", physicalScintillator,
+                                 physicalPMT7);
 
   // Logic to Attach sensitive detector to a logical volume
   // MuonDecay_SensitiveDetector* detector = new
   // MuonDecay_SensitiveDetector("SensitiveDetector");
 
-  MuonDecay_PMT_SD *detector = new MuonDecay_PMT_SD("PMT","PMT_Collection");
+  /*MuonDecay_PMT_SD *detector = new MuonDecay_PMT_SD("PMT","PMT_Collection");
   G4SDManager::GetSDMpointer()->AddNewDetector(detector);
   logicalPMT->SetSensitiveDetector(detector);
-
+*/
   MuonDecay_Scint_SD *detScint=new MuonDecay_Scint_SD("Slab","Scint_Collection");
   G4SDManager::GetSDMpointer()->AddNewDetector(detScint);
   logicalScintillator->SetSensitiveDetector(detScint);
+  //logicalTopScintillator->SetSensitiveDetector(detScint);
 
   return physWorld;
 }

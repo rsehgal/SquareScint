@@ -20,6 +20,16 @@ void MuonDecay_RunAction::BeginOfRunAction(const G4Run *)
   analMan->CreateNtuple("Decay", "A simple decay tree");
   analMan->CreateNtupleDColumn("delT");
   analMan->FinishNtuple();
+
+  analMan->CreateNtuple("geant","A simple geant tracking tree");
+  analMan->CreateNtupleSColumn("particle");
+  analMan->CreateNtupleSColumn("creatorProcess");
+  analMan->CreateNtupleIColumn("Channel");
+  analMan->CreateNtupleDColumn("Timestamp");
+  analMan->CreateNtupleIColumn("trackId"); 
+  analMan->CreateNtupleIColumn("parentId"); 
+  analMan->CreateNtupleIColumn("eventId");
+  analMan->FinishNtuple(); 
 }
 
 void MuonDecay_RunAction::EndOfRunAction(const G4Run *)
