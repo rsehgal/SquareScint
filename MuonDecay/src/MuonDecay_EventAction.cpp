@@ -26,10 +26,10 @@ void MuonDecay_EventAction::EndOfEventAction(const G4Event *event)
 {
   // TODO : All the required logic you want to do at the end
   //        of each event
-  fVecOfPulses.resize(4);
+  fVecOfPulses.resize(8);
 
   G4HCofThisEvent *hce                = event->GetHCofThisEvent();
-/*  G4int hcID                          = G4SDManager::GetSDMpointer()->GetCollectionID("PMT_Collection");
+  G4int hcID                          = G4SDManager::GetSDMpointer()->GetCollectionID("PMT_Collection");
   PMT_HitCollection *pmtHitCollection = static_cast<PMT_HitCollection *>(hce->GetHC(hcID));
 
   if (pmtHitCollection && pmtHitCollection->entries() > 0) {
@@ -39,7 +39,7 @@ void MuonDecay_EventAction::EndOfEventAction(const G4Event *event)
       fVecOfPulses[hit->GetChannelNum()].push_back(hit->GetTimestamp());
     }
   }
-*/
+
   G4int hcScintID                         = G4SDManager::GetSDMpointer()->GetCollectionID("Scint_Collection");
   Scint_HitCollection *scintHitCollection = static_cast<Scint_HitCollection *>(hce->GetHC(hcScintID));
 

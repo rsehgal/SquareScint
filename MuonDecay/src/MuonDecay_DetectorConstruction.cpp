@@ -92,10 +92,10 @@ G4Box *topScint = new G4Box("TopScintillator", 25 * cm, 0.5 * cm, 25 * cm);
   // MuonDecay_SensitiveDetector* detector = new
   // MuonDecay_SensitiveDetector("SensitiveDetector");
 
-  /*MuonDecay_PMT_SD *detector = new MuonDecay_PMT_SD("PMT","PMT_Collection");
+  MuonDecay_PMT_SD *detector = new MuonDecay_PMT_SD("PMT","PMT_Collection");
   G4SDManager::GetSDMpointer()->AddNewDetector(detector);
   logicalPMT->SetSensitiveDetector(detector);
-*/
+
   MuonDecay_Scint_SD *detScint=new MuonDecay_Scint_SD("Slab","Scint_Collection");
   G4SDManager::GetSDMpointer()->AddNewDetector(detScint);
   logicalScintillator->SetSensitiveDetector(detScint);
