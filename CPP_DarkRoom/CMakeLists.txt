@@ -48,6 +48,9 @@ target_link_libraries(ProcessDataWave ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Mat
 add_executable(MuonDecay MuonDecay.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(MuonDecay ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
+add_executable(MuonArrival MuonArrival.cpp Helpers.cpp Histograms.cpp)
+target_link_libraries(MuonArrival ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
+
 add_executable(MuonCapture MuonCapture.cpp Helpers.cpp Histograms.cpp)
 target_link_libraries(MuonCapture ${ROOT_LIBRARIES} ROOT::MathCore ROOT::Matrix ROOT::Minuit)
 
