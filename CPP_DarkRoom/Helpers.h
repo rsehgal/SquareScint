@@ -34,6 +34,8 @@ struct Data {
   }
 };
 
+extern int decayWindow;
+
 using D_VecOfVecOfHits = std::vector<std::vector<Hit *>>;
 using HitSet           = std::set<Hit *, HitPtrCompare>;
 using FittedGraph      = std::pair<std::unique_ptr<TGraph>, std::unique_ptr<TF1>>;
@@ -114,4 +116,5 @@ inline constexpr auto get_next_bin_mean = [](auto &it, const auto &end, double w
   return mean;
 };
 
+extern TH1F *GetHist_Exp(char *filename, UShort_t qth=0);
 #endif

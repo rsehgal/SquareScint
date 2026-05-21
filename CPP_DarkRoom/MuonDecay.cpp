@@ -9,187 +9,38 @@
 #include <TProfile.h>
 #include <fstream>
 #include <TGraph.h>
+#include "Helpers.h"
+
 int main(int argc, char *argv[])
 {
   TApplication *fApp = new TApplication("fApp", NULL, NULL);
+  
+  UShort_t qth    = std::atoi(argv[2]); // 410;// 300;
+  TH1F *histDecay = GetHist_Exp(argv[1], qth);
 
-  TFile *fout    = new TFile("decay.root", "RECREATE");
-  TTree *outTree = new TTree("muonElectron", "A simple Muon decay tree");
+  //TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0.06, decayWindow); //Working
+  TF1 *formu = new TF1("decayEqu", "[0]*exp(-x/[1]) + [2]*exp(-x/[3])+ [4]", 0.06, decayWindow);
+  // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
+  formu->SetParameters(80, 2.2, 16);
+  formu->SetParLimits(0, 0, 1e6);
+  //formu->SetParLimits(1, 2.1, 2.6);
+  formu->FixParameter(1, 2.19);
+  formu->SetParLimits(2, 0, 1e6);
+  formu->SetParLimits(3, 1.6, 2.09);
+  formu->SetParLimits(4, 0, 1e6);
 
-  UShort_t qMuon      = 6000;
-  UShort_t qElectron  = 6000;
-  ULong64_t tMuon     = 0;
-  ULong64_t tElectron = 0;
-  double delT         = -10.;
-
-  outTree->Branch("qMuon", &qMuon);
-  outTree->Branch("qElectron", &qElectron);
-  outTree->Branch("tMuon", &tMuon);
-  outTree->Branch("tElectron", &tElectron);
-  outTree->Branch("delT", &delT);
-
-  TFile *f     = new TFile(argv[1]);
-  TTree *ftree = (TTree *)f->Get("ftree");
-
-  gStyle->SetOptFit(111);
-  // Declaration of leaves types
-  //    vector<int>     qVec;
-  UShort_t q0;
-  UShort_t q1;
-  UShort_t q2;
-  UShort_t q3;
-  UShort_t q4;
-  UShort_t q5;
-  UShort_t q6;
-  UShort_t q7;
-  UShort_t q8;
-  ULong64_t t0;
-  ULong64_t t1;
-  ULong64_t t2;
-  ULong64_t t3;
-  ULong64_t t4;
-  ULong64_t t5;
-  ULong64_t t6;
-  ULong64_t t7;
-  ULong64_t t8;
-
-  // Set branch addresses.
-  //   ftree->SetBranchAddress("qVec",&qVec);
-  ftree->SetBranchAddress("q0", &q0);
-  ftree->SetBranchAddress("q1", &q1);
-  ftree->SetBranchAddress("q2", &q2);
-  ftree->SetBranchAddress("q3", &q3);
-  ftree->SetBranchAddress("q4", &q4);
-  ftree->SetBranchAddress("q5", &q5);
-  ftree->SetBranchAddress("q6", &q6);
-  ftree->SetBranchAddress("q7", &q7);
-  ftree->SetBranchAddress("q8", &q8);
-  ftree->SetBranchAddress("t0", &t0);
-  ftree->SetBranchAddress("t1", &t1);
-  ftree->SetBranchAddress("t2", &t2);
-  ftree->SetBranchAddress("t3", &t3);
-  ftree->SetBranchAddress("t4", &t4);
-  ftree->SetBranchAddress("t5", &t5);
-  ftree->SetBranchAddress("t6", &t6);
-  ftree->SetBranchAddress("t7", &t7);
-  ftree->SetBranchAddress("t8", &t8);
-
-  //     This is the loop skeleton
-  //       To read only selected branches, Insert statements like:
-  // ftree->SetBranchStatus("*",0);  // disable all branches
-  // TTreePlayer->SetBranchStatus("branchname",1);  // activate branchname
-
-  Long64_t nentries = ftree->GetEntries();
-
-  Long64_t nbytes = 0;
-  bool prompt     = false;
-  bool delay      = false;
-
-  ULong64_t tPrompt = 0;
-  ULong64_t tDelay  = 0;
-  UShort_t qStop    = 0;
-
-  unsigned int decayEventCounter = 0;
-
-  TH2F *histCorr = new TH2F("HistCorr", "HistCorr", 500, 0, 1000, 200, 0, 200);
-  // TH2F *histCorr = new TH2F("HistCorr","HistCorr",50,0,0.2,200,0,200);
-
-  std::vector<float> thVec;
-  std::vector<float> decayVec;
-
-  // for(unsigned int m = 0 ; m < 50 ; m++)
-  {
-    // UShort_t qth = 100+ 10*m;
-    UShort_t qth = std::atoi(argv[2]); // 410;// 300;
-    thVec.push_back(qth);
-
-    int decayWindow = 20;
-    /// TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 2000, 0, 200);
-    TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 200, 0, decayWindow);
-    // UShort_t qth    = std::atoi(argv[2]);//0;//400;
-
-    std::ofstream outfile("delT.txt");
-    double qPromt = 1;
-    double qDelay = 1;
-
-    for (Long64_t i = 0; i < nentries; i++) {
-      nbytes += ftree->GetEntry(i);
-
-      ULong64_t pmtTimingArr[4] = {t4, t5, t6, t7};
-      UShort_t pmtChargeArr[4]  = {q4, q5, q6, q7};
-
-      if (q4 > qth && q5 > qth && q6 > qth && q7 > qth) {
-        Long64_t t45 = t4 - t5;
-        Long64_t t67 = t6 - t7;
-        if (!prompt) { //} && abs(t45)<1000 && abs(t67) < 1000) {
-          tPrompt = t4;
-          tMuon   = tPrompt;
-          for (unsigned int j = 1; j < 4; j++) {
-            if (pmtTimingArr[j] < tPrompt) tPrompt = pmtTimingArr[j];
-          }
-
-          // tPrompt = (t4 + t5 + t6 + t7) / 4.;
-          prompt = true;
-          delay  = false;
-          qMuon  = std::pow((q4 * q5 * q6 * q7), 0.25);
-
-        } else {
-          // UShort_t qthe=1000;
-          // if (!delay && q4 > qthe && q5 > qthe && q6 > qthe && q7 > qthe)
-          if (!delay) {
-            tDelay = t4;
-            qStop  = q4;
-            for (unsigned int j = 1; j < 4; j++) {
-              if (pmtTimingArr[j] < tDelay) {
-                tDelay = pmtTimingArr[j];
-                qStop  = pmtChargeArr[j];
-              }
-            }
-
-            tElectron = tDelay;
-            qElectron = std::pow((q4 * q5 * q6 * q7), 0.25);
-
-            // tDelay = (t4 + t5 + t6 + t7) / 4.;
-            // if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6) && (qMuon > qElectron)) 
-            if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6) ) {
-              delT = 1. * (tDelay - tPrompt) / 1000000.;
-              histDecay->Fill(delT);
-              outfile << delT << std::endl;
-              outTree->Fill();
-
-              // std::cout << "Decay event found...." << std::endl;
-              delay  = true;
-              prompt = false;
-              decayEventCounter++;
-              // histCorr->Fill(1/sqrt(qStop),(tDelay - tPrompt)/1000000);
-              histCorr->Fill(qStop, (tDelay - tPrompt) / 1000000);
-            } else {
-              tPrompt = tDelay;
-            }
-          }
-        }
-        // std::cout << t4 << " : " << t5 << " : " << t6 << " : " << t7 << std::endl;
-      }
-    }
-    TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime]) + [Offset]", 0.6, decayWindow);
-    // TF1 *formu = new TF1("decayEqu", "[Amplitude]*exp(-x/[DecayTime])", 0, 200);
-    formu->SetParameters(80, 2.2, 16);
-
-    histDecay->SetMarkerStyle(8);
-    histDecay->Draw("E1 P");
-    histDecay->Fit(formu, "R");
-    std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
-    decayVec.push_back(formu->GetParameter(1));
-
-    fout->cd();
-    outTree->SetDirectory(fout);
-    outTree->Write();
-    histDecay->SetDirectory(fout);
-    histDecay->Write();
-    fout->Write();
-    fout->Close();
-  }
-  std::cout << "Total number of decay event : " << decayEventCounter << std::endl;
+  histDecay->SetMarkerStyle(8);
+  histDecay->Draw("E1 P");
+  int status = histDecay->Fit(formu, "RS");
+  std::cout <<"=================================" << std::endl;
+  std::cout << "Fit STatus : " << status << std::endl;
+  std::cout <<"=================================" << std::endl;
+  std::cout << "Decay Time : " << formu->GetParameter(1) << " : Qth : " << qth << std::endl;
+  // decayVec.push_back(formu->GetParameter(1));
+  TFile *f = new TFile("decay.root","UPDATE");
+  histDecay->Write();
+  f->Close();
 
   fApp->Run();
+  return 0;
 }

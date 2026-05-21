@@ -20,7 +20,22 @@
 #include <algorithm>
 #include <vector>
 #include <numeric>
+
+#include <TH1F.h>
+#include <TFile.h>
+#include <TApplication.h>
+#include <TCanvas.h>
+#include <TF1.h>
+#include <TTree.h>
+#include <TStyle.h>
+#include <TH2F.h>
+#include <TProfile.h>
+#include <fstream>
+#include <TGraph.h>
+
 namespace fs = std::filesystem;
+
+int decayWindow = 15;
 
 HitPtrCompare comp;
 
@@ -28,25 +43,23 @@ std::vector<int> color = {kBlack, kRed, kBlue, kMagenta, kGreen, kCyan};
 
 std::string searchDir = "/home/rsehgal/shared/SquareScint_DarkRoom/ExpData_DarkRoom/Slab_Cylinder/";
 
-HitSet topBar            = {new Hit(0), new Hit(1)};
-HitSet bottomBar         = {new Hit(2), new Hit(3)};
+HitSet topBar    = {new Hit(0), new Hit(1)};
+HitSet bottomBar = {new Hit(2), new Hit(3)};
 
-HitSet pmt4              = {new Hit(4)};
-HitSet pmt5              = {new Hit(5)};
-HitSet pmt6              = {new Hit(6)};
-HitSet pmt7              = {new Hit(7)};
-
+HitSet pmt4 = {new Hit(4)};
+HitSet pmt5 = {new Hit(5)};
+HitSet pmt6 = {new Hit(6)};
+HitSet pmt7 = {new Hit(7)};
 
 HitSet slab              = {new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
-HitSet slab1              = {new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
-HitSet slab2              = {new Hit(0), new Hit(1), new Hit(2), new Hit(3)};
+HitSet slab1             = {new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+HitSet slab2             = {new Hit(0), new Hit(1), new Hit(2), new Hit(3)};
 HitSet slabWithTopBar    = {new Hit(0), new Hit(1), new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
 HitSet slabWithBottomBar = {new Hit(2), new Hit(3), new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
 
 HitSet slabWithTopAndBottomBar = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
                                   new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
-HitSet bothSlabs = {new Hit(0), new Hit(1), new Hit(2), new Hit(3),
-                                  new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
+HitSet bothSlabs = {new Hit(0), new Hit(1), new Hit(2), new Hit(3), new Hit(4), new Hit(5), new Hit(6), new Hit(7)};
 
 HitSet OnlyTopAndBottomBar = {new Hit(1), new Hit(1), new Hit(2), new Hit(3)};
 
@@ -444,7 +457,7 @@ TH2F *GetEntriesHist(std::vector<short> locationsVec)
 
 std::unique_ptr<Data> GetMeanValues(short xpos, short ypos)
 {
-  std::string FILENAME = "output_"+std::to_string(xpos)+"_"+std::to_string(ypos)+".root";
+  std::string FILENAME = "output_" + std::to_string(xpos) + "_" + std::to_string(ypos) + ".root";
   std::string filename = searchDir + FILENAME;
   TFile *f             = new TFile(filename.c_str(), "r");
   TTree *ftree         = (TTree *)f->Get("ftree");
@@ -491,31 +504,30 @@ std::unique_ptr<Data> GetMeanValues(short xpos, short ypos)
   Long64_t nbytes    = 0;
   ULong64_t nentries = ftree->GetEntries();
 
-  std::vector<double>q45_vec;
-  std::vector<double>q67_vec;
+  std::vector<double> q45_vec;
+  std::vector<double> q67_vec;
 
   for (unsigned int i = 0; i < nentries; i++) {
     nbytes += ftree->GetEntry(i);
 
     if (q4 > 0. && q5 > 0. && q6 > 0. && q7 > 0.) {
 
-	double ratio45=log((1.*q4)/(1.*q5));
-	double ratio67=log((1.*q6)/(1.*q7));
- 	q45_vec.emplace_back(ratio45);
- 	q67_vec.emplace_back(ratio67);
-   
+      double ratio45 = log((1. * q4) / (1. * q5));
+      double ratio67 = log((1. * q6) / (1. * q7));
+      q45_vec.emplace_back(ratio45);
+      q67_vec.emplace_back(ratio67);
     }
   }
 
-  double sum_45=std::accumulate(q45_vec.begin(),q45_vec.end(),0.);
+  double sum_45 = std::accumulate(q45_vec.begin(), q45_vec.end(), 0.);
   sum_45 /= q45_vec.size();
-  double sum_67=std::accumulate(q67_vec.begin(),q67_vec.end(),0.);
+  double sum_67 = std::accumulate(q67_vec.begin(), q67_vec.end(), 0.);
   sum_67 /= q67_vec.size();
 
-  return std::make_unique<Data>((double)xpos,(double)ypos,sum_45,sum_67);
+  return std::make_unique<Data>((double)xpos, (double)ypos, sum_45, sum_67);
 }
 
-void PositionCalibration(const std::vector<std::unique_ptr<Data>>& vecOfData)
+void PositionCalibration(const std::vector<std::unique_ptr<Data>> &vecOfData)
 {
   // 1. Initialize the Fitters
   // "Hyp3" specifies a formula with 3 parameters + 1 intercept
@@ -529,7 +541,8 @@ void PositionCalibration(const std::vector<std::unique_ptr<Data>>& vecOfData)
     double y_r         = vecOfData[i]->q45;
     double interaction = x_r * y_r;
 
-    std::cout <<"(" << vecOfData[i]->xtrue <<","<<vecOfData[i]->ytrue <<") :: " <<  x_r << " : " << y_r << std::endl;
+    std::cout << "(" << vecOfData[i]->xtrue << "," << vecOfData[i]->ytrue << ") :: " << x_r << " : " << y_r
+              << std::endl;
 
     double input_vars[3] = {x_r, y_r, interaction};
 
@@ -540,8 +553,8 @@ void PositionCalibration(const std::vector<std::unique_ptr<Data>>& vecOfData)
   // 4. Perform the Fit
   fitterX->EvalRobust();
   fitterY->EvalRobust();
-  //fitterX->Eval();
-  //fitterY->Eval();
+  // fitterX->Eval();
+  // fitterY->Eval();
 
   // 5. Extract Coefficients
   TVectorD coeffsX, coeffsY;
@@ -554,14 +567,14 @@ void PositionCalibration(const std::vector<std::unique_ptr<Data>>& vecOfData)
   // Index 2: Y_raw coefficient (a2/b2)
   // Index 3: Interaction coefficient (a3/b3)
 
-/*  std::cout << "--- X-Coordinate Coefficients (a) ---" << std::endl;
-  // Use brackets [ ] to access the specific double values
-  printf("a0 (Offset): %0.4f\na1 (Scale X): %0.4f\na2 (Skew Y): %0.4f\na3 (Interaction): %0.4f\n\n", 
-         coeffsX, coeffsX, coeffsX, coeffsX);
+  /*  std::cout << "--- X-Coordinate Coefficients (a) ---" << std::endl;
+    // Use brackets [ ] to access the specific double values
+    printf("a0 (Offset): %0.4f\na1 (Scale X): %0.4f\na2 (Skew Y): %0.4f\na3 (Interaction): %0.4f\n\n",
+           coeffsX, coeffsX, coeffsX, coeffsX);
 
-  std::cout << "--- Y-Coordinate Coefficients (b) ---" << std::endl;
-  printf("b0 (Offset): %0.4f\nb1 (Skew X): %0.4f\nb2 (Scale Y): %0.4f\nb3 (Interaction): %0.4f\n", 
-         coeffsY, coeffsY, coeffsY, coeffsY);*/
+    std::cout << "--- Y-Coordinate Coefficients (b) ---" << std::endl;
+    printf("b0 (Offset): %0.4f\nb1 (Skew X): %0.4f\nb2 (Scale Y): %0.4f\nb3 (Interaction): %0.4f\n",
+           coeffsY, coeffsY, coeffsY, coeffsY);*/
 
   coeffsX.Print();
   coeffsY.Print();
@@ -570,5 +583,151 @@ void PositionCalibration(const std::vector<std::unique_ptr<Data>>& vecOfData)
   delete fitterY;
 }
 
+TH1F *GetHist_Exp(char *filename, UShort_t qth)
+{
+  TFile *fout         = new TFile("decay.root", "RECREATE");
+  TTree *outTree      = new TTree("muonElectron", "A simple Muon decay tree");
+  UShort_t qMuon      = 6000;
+  UShort_t qElectron  = 6000;
+  ULong64_t tMuon     = 0;
+  ULong64_t tElectron = 0;
+  double delT         = -10.;
 
+  TFile *f     = new TFile(filename, "r");
+  TTree *ftree = (TTree *)f->Get("ftree");
 
+  UShort_t q0;
+  UShort_t q1;
+  UShort_t q2;
+  UShort_t q3;
+  UShort_t q4;
+  UShort_t q5;
+  UShort_t q6;
+  UShort_t q7;
+  UShort_t q8;
+  ULong64_t t0;
+  ULong64_t t1;
+  ULong64_t t2;
+  ULong64_t t3;
+  ULong64_t t4;
+  ULong64_t t5;
+  ULong64_t t6;
+  ULong64_t t7;
+  ULong64_t t8;
+
+  ftree->SetBranchAddress("q0", &q0);
+  ftree->SetBranchAddress("q1", &q1);
+  ftree->SetBranchAddress("q2", &q2);
+  ftree->SetBranchAddress("q3", &q3);
+  ftree->SetBranchAddress("q4", &q4);
+  ftree->SetBranchAddress("q5", &q5);
+  ftree->SetBranchAddress("q6", &q6);
+  ftree->SetBranchAddress("q7", &q7);
+  ftree->SetBranchAddress("q8", &q8);
+  ftree->SetBranchAddress("t0", &t0);
+  ftree->SetBranchAddress("t1", &t1);
+  ftree->SetBranchAddress("t2", &t2);
+  ftree->SetBranchAddress("t3", &t3);
+  ftree->SetBranchAddress("t4", &t4);
+  ftree->SetBranchAddress("t5", &t5);
+  ftree->SetBranchAddress("t6", &t6);
+  ftree->SetBranchAddress("t7", &t7);
+  ftree->SetBranchAddress("t8", &t8);
+
+  Long64_t nentries = ftree->GetEntries();
+
+  Long64_t nbytes = 0;
+  bool prompt     = false;
+  bool delay      = false;
+
+  ULong64_t tPrompt = 0;
+  ULong64_t tDelay  = 0;
+  UShort_t qStop    = 0;
+
+  unsigned int decayEventCounter = 0;
+
+  TH2F *histCorr = new TH2F("HistCorr", "HistCorr", 500, 0, 1000, 200, 0, 200);
+  // TH2F *histCorr = new TH2F("HistCorr","HistCorr",50,0,0.2,200,0,200);
+
+  std::vector<float> thVec;
+  std::vector<float> decayVec;
+
+  // UShort_t qth = std::atoi(argv[2]); // 410;// 300;
+  thVec.push_back(qth);
+
+  TH1F *histDecay = new TH1F("MuonDecay", "MuonDecay", 300, 0, decayWindow);
+
+  std::ofstream outfile("delT.txt");
+  double qPromt = 1;
+  double qDelay = 1;
+
+  std::cout << "--------------------------------------" << std::endl;
+  std::cout << "QTH : " << qth << std::endl;
+  std::cout << "--------------------------------------" << std::endl;
+  for (Long64_t i = 0; i < nentries; i++) {
+    nbytes += ftree->GetEntry(i);
+
+    ULong64_t pmtTimingArr[4] = {t4, t5, t6, t7};
+    UShort_t pmtChargeArr[4]  = {q4, q5, q6, q7};
+
+    if (q4 > qth && q5 > qth && q6 > qth && q7 > qth) {
+      Long64_t t45 = t4 - t5;
+      Long64_t t67 = t6 - t7;
+      if (!prompt) { //} && abs(t45)<1000 && abs(t67) < 1000) {
+        tPrompt = t4;
+        tMuon   = tPrompt;
+        for (unsigned int j = 1; j < 4; j++) {
+          if (pmtTimingArr[j] < tPrompt) tPrompt = pmtTimingArr[j];
+        }
+
+        // tPrompt = (t4 + t5 + t6 + t7) / 4.;
+        prompt = true;
+        delay  = false;
+        qMuon  = std::pow((q4 * q5 * q6 * q7), 0.25);
+
+      } else {
+        // UShort_t qthe=1000;
+        // if (!delay && q4 > qthe && q5 > qthe && q6 > qthe && q7 > qthe)
+        if (!delay) {
+          tDelay = t4;
+          qStop  = q4;
+          for (unsigned int j = 1; j < 4; j++) {
+            if (pmtTimingArr[j] < tDelay) {
+              tDelay = pmtTimingArr[j];
+              qStop  = pmtChargeArr[j];
+            }
+          }
+
+          tElectron = tDelay;
+          qElectron = std::pow((q4 * q5 * q6 * q7), 0.25);
+
+          // tDelay = (t4 + t5 + t6 + t7) / 4.;
+          // if ((tDelay - tPrompt) > 700000 && (tDelay - tPrompt) < (decayWindow * 1e+6) && (qMuon > qElectron))
+          if ((tDelay - tPrompt) > 100000 && (tDelay - tPrompt) < (decayWindow * 1e+6)) {
+            delT = 1. * (tDelay - tPrompt) / 1000000.;
+            histDecay->Fill(delT);
+            outfile << delT << std::endl;
+            outTree->Fill();
+
+            // std::cout << "Decay event found...." << std::endl;
+            delay  = true;
+            prompt = false;
+            decayEventCounter++;
+            // histCorr->Fill(1/sqrt(qStop),(tDelay - tPrompt)/1000000);
+          } else {
+            tPrompt = tDelay;
+          }
+        }
+      }
+      // std::cout << t4 << " : " << t5 << " : " << t6 << " : " << t7 << std::endl;
+    }
+  }
+  std::cout << "Writing TTree to the ROOT file..." << std::endl;
+  fout->cd();
+  outTree->SetDirectory(fout);
+  outTree->Write();
+  std::cout << "TTree written...." << std::endl;
+  fout->Close();
+  std::cout << "File Closed....." << std::endl;
+  return histDecay;
+}

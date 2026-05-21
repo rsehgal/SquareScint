@@ -68,7 +68,7 @@ void MuonDecay_PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   This preserves the CRY direction and charge, but forces the decay physics
   and help in getting simulation result quicker
  */
-  fParticleGun->SetParticleEnergy(CLHEP::RandFlat::shoot(5.0, 50.0) * MeV);
+  fParticleGun->SetParticleEnergy(CLHEP::RandFlat::shoot(5.0, 100.0) * MeV);
   // fParticleGun->SetParticleEnergy(20.*MeV);
 
   dir.set(muon->angleX, muon->angleY, muon->angleZ);

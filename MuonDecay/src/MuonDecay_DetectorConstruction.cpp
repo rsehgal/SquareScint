@@ -29,12 +29,28 @@ G4VPhysicalVolume *MuonDecay_DetectorConstruction::Construct() {
   // TODO : Create your desired detectors here
 G4Material *Fe =
       nist->FindOrBuildMaterial("G4_Fe");
-  G4Box *ironSlab = new G4Box("IronSlab", 25 * cm, 0.5 * cm, 25 * cm);
-  G4LogicalVolume *logicalIronSlab =
-      new G4LogicalVolume(ironSlab, Fe, "LogicalIronSlab");
- /* G4VPhysicalVolume *physicalIronSlab =
-      new G4PVPlacement(nullptr, G4ThreeVector(0.,6.*cm,0.), logicalIronSlab,
-                        "PhysicalIronSlab", logicWorld, false, 0, true);
+G4Material *Al =
+      nist->FindOrBuildMaterial("G4_Al");
+G4Material *Cu =
+      nist->FindOrBuildMaterial("G4_Cu");
+G4Material *Pb =
+      nist->FindOrBuildMaterial("G4_Pb");
+
+  G4Box *cryPlane = new G4Box("CRYPlane", 25 * cm, 1 * mm, 25 * cm);
+  G4LogicalVolume *logicalCRYPlane =
+      new G4LogicalVolume(cryPlane,Al, "LogicalCRYPlane");
+  G4VPhysicalVolume *physicalCRYPlane =
+      new G4PVPlacement(nullptr, G4ThreeVector(0.,25.*cm,0.), logicalCRYPlane,
+                        "PhysicalCRYPlane", logicWorld, false, 0, true);
+
+
+
+  G4Box *materialSlab = new G4Box("MaterialSlab", 25 * cm, 2 * cm, 25 * cm);
+  G4LogicalVolume *logicalMaterialSlab =
+      new G4LogicalVolume(materialSlab,Cu, "LogicalMaterialSlab");
+/*  G4VPhysicalVolume *physicalMaterialSlab =
+      new G4PVPlacement(nullptr, G4ThreeVector(0.,8.*cm,0.), logicalMaterialSlab,
+                        "PhysicalMaterialSlab", logicWorld, false, 0, true);
 */
 
 
@@ -99,7 +115,7 @@ G4Box *topScint = new G4Box("TopScintillator", 25 * cm, 0.5 * cm, 25 * cm);
   MuonDecay_Scint_SD *detScint=new MuonDecay_Scint_SD("Slab","Scint_Collection");
   G4SDManager::GetSDMpointer()->AddNewDetector(detScint);
   logicalScintillator->SetSensitiveDetector(detScint);
-  //logicalTopScintillator->SetSensitiveDetector(detScint);
+//  logicalTopScintillator->SetSensitiveDetector(detScint);
 
   return physWorld;
 }

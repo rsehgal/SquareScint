@@ -42,9 +42,10 @@ G4bool MuonDecay_Scint_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
                                                         track->GetParentID(), creatorProcess));
   }
 
-  if ((particleName == "e-" || particleName == "e+") && track->GetParentID() == 1 &&
-      track->GetCurrentStepNumber() == 1) {
-    if (energy > 5 * MeV) {
+  if ((particleName == "e-" || particleName == "e+") && track->GetParentID() == 1 && (creatorProcess=="Decay" || creatorProcess=="muMinusCaptureAtRest")
+//&&        track->GetCurrentStepNumber() == 1
+) {
+    if (energy > 3 * MeV) {
       G4double t_decay = track->GetGlobalTime();
       // G4double t_decay = track->GetLocalTime();
       /* std::cout << "SEHGAL ELECTRON CREATED/MOVING AT: " << t_decay << " ns"
@@ -56,6 +57,7 @@ G4bool MuonDecay_Scint_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
       if (particleName == "e-") survivedMuMinus++;
       if (particleName == "e+") survivedMuPlus++;
     }
+//track->SetTrackStatus(fStopAndKill);
   }
   return true;
 }
