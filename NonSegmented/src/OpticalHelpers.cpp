@@ -49,7 +49,7 @@ void AttachOpticalProperties(G4Material *scintMat) {
                           scintSpectrum, nEntries);
   mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy,
                           scintSpectrum, nEntries);
-  mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV);
+  mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10. / MeV);
   mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
   // mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 2.1 * ns);
   mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 0.9 * ns);

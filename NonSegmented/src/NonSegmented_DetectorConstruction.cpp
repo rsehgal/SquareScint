@@ -66,13 +66,13 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
 
   G4LogicalVolume *pmtLogical = GetPMT();
   G4VPhysicalVolume *physicalPMT1 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 1, true);
-  G4VPhysicalVolume *physicalPMT3 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,-29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 3, true);
+  G4VPhysicalVolume *physicalPMT3 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,-29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 2, true);
 
 #ifndef SCINTBAR
   G4RotationMatrix* rotY90 = new G4RotationMatrix();
 rotY90->rotateY(90.*deg);
 
- G4VPhysicalVolume *physicalPMT2 = new G4PVPlacement(rotY90, G4ThreeVector(29.000000*cm,0,0), pmtLogical, "PhysicalPMT", logicWorld, false, 2, true);
+ G4VPhysicalVolume *physicalPMT2 = new G4PVPlacement(rotY90, G4ThreeVector(29.000000*cm,0,0), pmtLogical, "PhysicalPMT", logicWorld, false, 3, true);
   G4VPhysicalVolume *physicalPMT4 = new G4PVPlacement(rotY90, G4ThreeVector(-29.000000*cm,0,0), pmtLogical, "PhysicalPMT", logicWorld, false, 4, true);
 
 #endif

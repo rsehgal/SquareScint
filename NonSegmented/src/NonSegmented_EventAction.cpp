@@ -37,8 +37,11 @@ void NonSegmented_EventAction::EndOfEventAction(const G4Event *event)
 
   if (pmtHitCollection->entries() > 0 && slabHitCollection->entries() > 0) {
     // std::cout << "Genuine hit collection found...." << std::endl;
-
+#ifndef SCINTBAR
     std::vector<std::vector<double>> vecOfPhotonArrivalTime(4);
+#else
+    std::vector<std::vector<double>> vecOfPhotonArrivalTime(2);
+#endif
     unsigned int entries = pmtHitCollection->entries();
     // std::cout << "Entries : " << entries << std::endl;
     for (unsigned int i = 0; i < entries; i++) {
@@ -47,15 +50,16 @@ void NonSegmented_EventAction::EndOfEventAction(const G4Event *event)
       vecOfPhotonArrivalTime[hit->GetPmtID() - 1].push_back(hit->GetPhotonArrivalTime());
     }
 
+
     bool detectedByAll = true;
     /*for (unsigned int i = 0; i < vecOfPhotonArrivalTime.size(); i++) {
       detectedByAll &= vecOfPhotonArrivalTime[i].size() > 0;
     }*/
       detectedByAll &= vecOfPhotonArrivalTime[0].size() > 0;
-      detectedByAll &= vecOfPhotonArrivalTime[2].size() > 0;
+      detectedByAll &= vecOfPhotonArrivalTime[1].size() > 0;
 
 #ifndef SCINTBAR
-      detectedByAll &= vecOfPhotonArrivalTime[1].size() > 0;
+      detectedByAll &= vecOfPhotonArrivalTime[2].size() > 0;
       detectedByAll &= vecOfPhotonArrivalTime[3].size() > 0;
 #endif
 
