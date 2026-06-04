@@ -52,9 +52,9 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
 
   // TODO : Create your desired detectors here
 #ifdef SCINTBAR
-  G4Box *scintSlab                  = new G4Box("ScintSlab", 2.5 * cm, 2.5 * cm, 25 * cm);
+  G4Box *scintSlab                  = new G4Box("ScintSlab", 3 * cm, 3 * cm, 50 * cm);
 #else
-  G4Box *scintSlab                  = new G4Box("ScintSlab", 25 * cm, 2.5 * cm, 25 * cm);
+  G4Box *scintSlab                  = new G4Box("ScintSlab", 25 * cm, 3 * cm, 25 * cm);
 #endif
 
   G4Material *scintMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
@@ -65,10 +65,13 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
   G4VPhysicalVolume *physicalSlab = new G4PVPlacement(nullptr, G4ThreeVector(), scintSlabLogical, "PhysicalScintSlab", logicWorld, false, 0, true);
 
   G4LogicalVolume *pmtLogical = GetPMT();
+#ifdef SCINTBAR
+  G4VPhysicalVolume *physicalPMT1 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,54.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 1, true);
+  G4VPhysicalVolume *physicalPMT3 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,-54.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 2, true);
+#else
   G4VPhysicalVolume *physicalPMT1 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 1, true);
   G4VPhysicalVolume *physicalPMT3 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,-29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 2, true);
 
-#ifndef SCINTBAR
   G4RotationMatrix* rotY90 = new G4RotationMatrix();
 rotY90->rotateY(90.*deg);
 
