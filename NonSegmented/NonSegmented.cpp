@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   G4OpticalPhysics *opticalPhysics   = new G4OpticalPhysics;
   G4VModularPhysicsList *physicsList = new FTFP_BERT_HP();
 //physicsList->RegisterPhysics(new G4RadioactiveDecayPhysics());
-  #define OPTICAL_PHYSICS
+//  #define OPTICAL_PHYSICS
   #ifdef OPTICAL_PHYSICS
   physicsList->RegisterPhysics(opticalPhysics);
   #endif

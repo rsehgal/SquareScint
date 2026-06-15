@@ -45,10 +45,11 @@ void NonSegmented_PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
     
     //TODO :  Logic to change the particle position for each event
 
-  double ypos = 35;
+  double ypos = 45;
 //#define Na22
 #ifdef Na22
 //G4HadronicParameters::Instance()->SetTimeThresholdForRadioactiveDecay(1.0e+60 * CLHEP::year);
+ypos=30.5;
 G4ParticleDefinition* ion = G4IonTable::GetIonTable()->GetIon(11, 22, 0);
 fParticleGun->SetParticleDefinition(ion);
 fParticleGun->SetParticleEnergy(0*eV);

@@ -1,12 +1,12 @@
 #!/bin/sh
-fileIni="Muon_output"
-for (( i=-20; i<=20; i+=5 ))
+fileIni="sim_output"
+for (( i=-20; i<=20; i+=10 ))
 do
-  for (( j=-20; j<=20; j+=5 ))
+  for (( j=-20; j<=20; j+=10 ))
   do
     #echo "Current value: $i : $j"
     filename=$fileIni"_"$i"_"$j"_data.root"
-    #echo $filename
+    echo $filename
     ./NonSegmented muon.mac $filename $i $j
   done
 done

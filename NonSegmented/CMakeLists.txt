@@ -21,6 +21,11 @@ if(SCINTBAR)
 add_definitions(-DSCINTBAR)
 endif(SCINTBAR)
 
+option(OPTICAL_PHYSICS "Use Scintillator Bar" OFF)
+if(OPTICAL_PHYSICS)
+add_definitions(-DOPTICAL_PHYSICS)
+endif(OPTICAL_PHYSICS)
+
 find_package(ROOT REQUIRED)
 
 # Include directories

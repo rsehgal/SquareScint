@@ -68,18 +68,27 @@ void NonSegmented_EventAction::EndOfEventAction(const G4Event *event)
       for (unsigned int i = 1; i < vecOfPhotonArrivalTime.size(); i++) {
         analMan->FillNtupleDColumn(1, i - 1, timing0 - GetTiming(vecOfPhotonArrivalTime[i]));
       }*/
+
+#ifndef SCINTBAR
+	for (unsigned int i = 0; i < vecOfPhotonArrivalTime.size(); i++) {
+        analMan->FillNtupleDColumn(2, i , GetTiming(vecOfPhotonArrivalTime[i])+biasVec[i]+G4RandGauss::shoot(0.0, stdVec[i]));
+        analMan->FillNtupleDColumn(2, i+4 , G4RandGauss::shoot(vecOfPhotonArrivalTime[i].size(),2));
+      }
+
+#else
 	for (unsigned int i = 0; i < vecOfPhotonArrivalTime.size(); i++) {
         analMan->FillNtupleDColumn(1, i , GetTiming(vecOfPhotonArrivalTime[i])+biasVec[i]+G4RandGauss::shoot(0.0, stdVec[i]));
         analMan->FillNtupleDColumn(1, i+4 , G4RandGauss::shoot(vecOfPhotonArrivalTime[i].size(),2));
       }
+#endif
       // Get Hit point on Slab, currently taking the hit point on top surface
       NonSegmented_Slab_Hit *slabHit = (*slabHitCollection)[0];
       //slabHit->Print();
-      analMan->FillNtupleDColumn(1, 8, slabHit->GetX());
-      analMan->FillNtupleDColumn(1, 9, slabHit->GetZ());
-      analMan->AddNtupleRow(1);
+      analMan->FillNtupleDColumn(2, 8, slabHit->GetX());
+      analMan->FillNtupleDColumn(2, 9, slabHit->GetZ());
     }
   } else {
     // std::cout << "Required Hit Collection NOT found...." << std::endl;
   }
+      analMan->AddNtupleRow(2);
 }

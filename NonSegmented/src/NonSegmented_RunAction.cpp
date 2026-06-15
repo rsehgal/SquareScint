@@ -12,7 +12,7 @@ void NonSegmented_RunAction::BeginOfRunAction(const G4Run *)
   //analMan->OpenFile("out.root");
   analMan->OpenFile(fOutfileName);
   // Creating a TTree
-  analMan->CreateNtuple("ftree", "A simple tree");
+  analMan->CreateNtuple("ftreeOld", "A simple tree");
   analMan->CreateNtupleDColumn("pmtNo");
   analMan->CreateNtupleDColumn("arrivalTime");
   analMan->CreateNtupleDColumn("eventNum");
@@ -33,6 +33,21 @@ void NonSegmented_RunAction::BeginOfRunAction(const G4Run *)
   analMan->CreateNtupleDColumn("x");
   analMan->CreateNtupleDColumn("z");
   analMan->CreateNtupleDColumn("eDep");
+  analMan->FinishNtuple();
+
+  analMan->CreateNtuple("ftree", "A simple tree");
+  analMan->CreateNtupleDColumn("t4");
+  analMan->CreateNtupleDColumn("t5");
+  analMan->CreateNtupleDColumn("t6");
+  analMan->CreateNtupleDColumn("t7");
+  analMan->CreateNtupleDColumn("q4");
+  analMan->CreateNtupleDColumn("q5");
+  analMan->CreateNtupleDColumn("q6");
+  analMan->CreateNtupleDColumn("q7");
+  analMan->CreateNtupleDColumn("x");
+  analMan->CreateNtupleDColumn("z");
+  analMan->CreateNtupleDColumn("eDep");
+  analMan->CreateNtupleDColumn("ADC_Channel");
   analMan->FinishNtuple();
 
 }

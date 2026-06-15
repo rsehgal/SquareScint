@@ -65,6 +65,7 @@ HitSet OnlyTopAndBottomBar = {new Hit(1), new Hit(1), new Hit(2), new Hit(3)};
 
 HitSet slabWithCylinderAndBottomBar = {new Hit(4), new Hit(5), new Hit(6), new Hit(7),
                                        new Hit(2), new Hit(3), new Hit(1)};
+HitSet barWithCylinder             = {new Hit(0), new Hit(1), new Hit(2)};
 HitSet slabWithCylinder             = {new Hit(4), new Hit(5), new Hit(6), new Hit(7), new Hit(0)};
 HitSet slabWithStilbene             = {new Hit(4), new Hit(5), new Hit(6), new Hit(7), new Hit(0), new Hit(1)};
 HitSet slabWithCylinderAndStilbene  = {new Hit(4), new Hit(5), new Hit(6), new Hit(7), new Hit(0), new Hit(1)};

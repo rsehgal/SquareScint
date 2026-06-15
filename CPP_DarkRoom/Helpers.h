@@ -57,6 +57,7 @@ extern HitSet topBar;
 extern HitSet bottomBar;
 extern HitSet bothSlabs;
 extern HitSet slabWithCylinder;
+extern HitSet barWithCylinder;
 extern HitSet slabWithCylinderAndStilbene;
 extern HitSet slabWithStilbene;
 extern HitSet slabWithTopBar;
