@@ -4,10 +4,17 @@
 #include "G4VSensitiveDetector.hh"
 #include "G4HCofThisEvent.hh"
 #include "NonSegmented_HitCollections.h"
-
+#include "map"
 class NonSegmented_Slab_SD : public G4VSensitiveDetector {
     Slab_HitCollection *fSlabHitCollection;   
-    double fEDep; 
+    double fEDep;
+    double fEDep1274;
+    bool trackPrimary;
+    short gammaCounter;
+    std::vector<G4int> gammaVec; 
+    std::vector<double> energyVec;
+    static unsigned int counter;
+    std::map<G4int, G4double> fTrackEnergyMap; 
 public:
     NonSegmented_Slab_SD(const G4String& name, const G4String &collName);
     virtual ~NonSegmented_Slab_SD();

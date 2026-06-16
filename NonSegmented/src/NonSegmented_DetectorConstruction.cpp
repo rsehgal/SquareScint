@@ -13,7 +13,7 @@
 #include "NonSegmented_PMT_SD.h"
 #include "NonSegmented_Slab_SD.h"
 #include "OpticalHelpers.h"
-
+#include "G4Tubs.hh"
 NonSegmented_DetectorConstruction::NonSegmented_DetectorConstruction() {}
 
 NonSegmented_DetectorConstruction::~NonSegmented_DetectorConstruction() {}
@@ -47,6 +47,20 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
   G4Box *solidWorld            = new G4Box("World", 1.5 * m, 1.5 * m, 1.5 * m);
   G4LogicalVolume *logicWorld  = new G4LogicalVolume(solidWorld, worldMat, "World");
   G4VPhysicalVolume *physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0);
+G4RotationMatrix* rotY90 = new G4RotationMatrix();
+rotY90->rotateY(90.*deg);
+G4RotationMatrix* rotX90 = new G4RotationMatrix();
+rotX90->rotateX(90.*deg);
+
+// Create a 1-inch diameter, 3mm thick source capsule disk
+G4Tubs* sourceCapsule = new G4Tubs("SourceCapsule", 0.*mm, 12.5*mm, 1.5*mm, 0.*deg, 360.*deg);
+
+G4Material *plexi=nist->FindOrBuildMaterial("G4_Al");
+
+G4LogicalVolume* logicCapsule = new G4LogicalVolume(sourceCapsule, plexi, "LogicCapsule");
+
+// Place it at y = 31.5 mm so it sits naturally on top of the bar, enclosing the gun
+G4VPhysicalVolume *physicalCapsule=new G4PVPlacement(rotX90, G4ThreeVector(0.*mm, 131.5*mm, 0.*mm), logicCapsule, "PhysCapsule", logicWorld, false, 0,true);
 
   //G4OpticalSurface *opticalSurface = GetOpticalSurface();
 
@@ -72,9 +86,7 @@ G4VPhysicalVolume *NonSegmented_DetectorConstruction::Construct()
   G4VPhysicalVolume *physicalPMT1 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 1, true);
   G4VPhysicalVolume *physicalPMT3 = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,-29.000000*cm), pmtLogical, "PhysicalPMT", logicWorld, false, 2, true);
 
-  G4RotationMatrix* rotY90 = new G4RotationMatrix();
-rotY90->rotateY(90.*deg);
-
+  
  G4VPhysicalVolume *physicalPMT2 = new G4PVPlacement(rotY90, G4ThreeVector(29.000000*cm,0,0), pmtLogical, "PhysicalPMT", logicWorld, false, 3, true);
   G4VPhysicalVolume *physicalPMT4 = new G4PVPlacement(rotY90, G4ThreeVector(-29.000000*cm,0,0), pmtLogical, "PhysicalPMT", logicWorld, false, 4, true);
 
