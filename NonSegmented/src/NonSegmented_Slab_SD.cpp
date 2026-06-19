@@ -98,7 +98,8 @@ G4double edep  = step->GetTotalEnergyDeposit();
     track->SetTrackStatus(fStopAndKill);
   }
 
-  if (track->GetTrackID() == 1) {
+if (track->GetTrackID() == 1 || track->GetParticleDefinition()->GetParticleName()=="gamma") 
+{
     /*    if(!trackPrimary){
     std::cout << "PRIMARYRS : " << track->GetParticleDefinition()->GetParticleName() << std::endl;
     trackPrimary=true;
@@ -122,8 +123,10 @@ void NonSegmented_Slab_SD::EndOfEvent(G4HCofThisEvent *hce)
     
     if (energyDeposited > 0.001) { // 1 keV threshold
       
+      double sigma_E = sqrt(0.001658 * energyDeposited + 0.000314 * energyDeposited * energyDeposited);
       // 2. Apply your resolution smearing to the isolated energy deposit
-      double smeared_eDep = SmearSimulationData(energyDeposited);
+      //double smeared_eDep = SmearSimulationData(energyDeposited);
+      double smeared_eDep = gRandom->Gaus(energyDeposited, sigma_E);
       double adcChannel   = energyDeposited * 10000 * 0.6320;
 
       // 3. Fill your primary plotting columns with the SMEARED, isolated data

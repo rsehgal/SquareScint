@@ -49,6 +49,7 @@ void NonSegmented_RunAction::BeginOfRunAction(const G4Run *)
   analMan->CreateNtupleDColumn("eDep");
   analMan->CreateNtupleDColumn("eDepSmeared");
   analMan->CreateNtupleDColumn("ADC_Channel");
+  analMan->CreateNtupleDColumn("pulse", fPulse);
   analMan->FinishNtuple();
 
 }
@@ -59,3 +60,13 @@ void NonSegmented_RunAction::EndOfRunAction(const G4Run *)
   analMan->Write();
   analMan->CloseFile();
 }
+
+void NonSegmented_RunAction::FillPulse(std::vector<double> pulse)
+{
+  if(fPulse.size())
+  fPulse.clear();
+  for (unsigned int i = 0; i < pulse.size(); i++) {
+    fPulse.push_back(pulse[i]);
+  }
+}
+

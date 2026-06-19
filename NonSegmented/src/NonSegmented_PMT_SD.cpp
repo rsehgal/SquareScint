@@ -26,11 +26,15 @@ G4bool NonSegmented_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4Track *track            = step->GetTrack();
   G4double energy           = track->GetKineticEnergy();
   NonSegmented_PMT_Hit *hit = new NonSegmented_PMT_Hit;
-  // G4cout << "Detected energy: " << energy / MeV << " MeV" << G4endl;
+  //G4cout << "Detected energy: " << energy / MeV << " MeV" << G4endl;
 
   int copyNum   = track->GetTouchable()->GetVolume()->GetCopyNo();
-  double timing = track->GetGlobalTime();
+  //double timing = track->GetGlobalTime();
+  double timing = track->GetLocalTime();
+  //std::cout << "CopyNo : " << copyNum<< " :: Timing : " << timing << std::endl;
+
   hit->Set(copyNum, timing);
+  //hit->Print();
   fPMTHitCollection->insert(hit);
   return true;
 }

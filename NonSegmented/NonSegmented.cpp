@@ -64,7 +64,7 @@ int main(int argc, char **argv)
   runManager->SetUserAction(new NonSegmented_EventAction());
   //runManager->SetUserAction(new NonSegmented_TrackingAction());
   // runManager->SetUserAction(new NonSegmented_SteppingAction());
-    G4HadronicParameters::Instance()->SetTimeThresholdForRadioactiveDecay(1.0e+60 * CLHEP::year);
+  G4HadronicParameters::Instance()->SetTimeThresholdForRadioactiveDecay(1.0e+60 * CLHEP::year);
 
 
   G4VisManager *visManager = new G4VisExecutive();

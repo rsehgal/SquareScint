@@ -60,7 +60,7 @@ G4Material *plexi=nist->FindOrBuildMaterial("G4_Al");
 G4LogicalVolume* logicCapsule = new G4LogicalVolume(sourceCapsule, plexi, "LogicCapsule");
 
 // Place it at y = 31.5 mm so it sits naturally on top of the bar, enclosing the gun
-G4VPhysicalVolume *physicalCapsule=new G4PVPlacement(rotX90, G4ThreeVector(0.*mm, 131.5*mm, 0.*mm), logicCapsule, "PhysCapsule", logicWorld, false, 0,true);
+G4VPhysicalVolume *physicalCapsule=new G4PVPlacement(rotX90, G4ThreeVector(0.*mm, 31.5*mm, 0.*mm), logicCapsule, "PhysCapsule", logicWorld, false, 0,true);
 
   //G4OpticalSurface *opticalSurface = GetOpticalSurface();
 

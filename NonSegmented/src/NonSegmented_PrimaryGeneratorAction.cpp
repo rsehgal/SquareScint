@@ -53,7 +53,7 @@ ypos=31.5;
 G4ParticleDefinition* ion = G4IonTable::GetIonTable()->GetIon(11, 22, 0);
 fParticleGun->SetParticleDefinition(ion);
 fParticleGun->SetParticleEnergy(0*eV);
-//fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
+fParticleGun->SetParticlePosition(G4ThreeVector(fLocX*cm,ypos,fLocZ*cm));
 #else
 #define RANDOM_POS
 #ifdef RANDOM_POS

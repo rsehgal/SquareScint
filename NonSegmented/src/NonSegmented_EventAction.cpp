@@ -8,8 +8,11 @@
 #include "Helpers.h"
 //#include "G4RandGauss.hh"
 #include "Randomize.hh"
-
-NonSegmented_EventAction::NonSegmented_EventAction() {}
+#include "G4RunManager.hh"
+NonSegmented_EventAction::NonSegmented_EventAction() {
+G4UserRunAction *userRunAction = const_cast<G4UserRunAction *>(G4RunManager::GetRunManager()->GetUserRunAction());
+  fRunAction                     = static_cast<NonSegmented_RunAction *>(userRunAction);
+}
 
 NonSegmented_EventAction::~NonSegmented_EventAction() {}
 
@@ -35,8 +38,11 @@ void NonSegmented_EventAction::EndOfEventAction(const G4Event *event)
   PMT_HitCollection *pmtHitCollection   = static_cast<PMT_HitCollection *>(hce->GetHC(hcID_PMT));
   Slab_HitCollection *slabHitCollection = static_cast<Slab_HitCollection *>(hce->GetHC(hcID_Slab));
 
+  //if(pmtHitCollection->entries()>0 || slabHitCollection->entries() > 0)
+  //std::cout << "RAMAN : " << pmtHitCollection->entries() << " : " << slabHitCollection->entries() << std::endl;
+
   if (pmtHitCollection->entries() > 0 && slabHitCollection->entries() > 0) {
-    // std::cout << "Genuine hit collection found...." << std::endl;
+     //std::cout << "Genuine hit collection found...." << std::endl;
 #ifndef SCINTBAR
     std::vector<std::vector<double>> vecOfPhotonArrivalTime(4);
 #else
@@ -69,7 +75,7 @@ void NonSegmented_EventAction::EndOfEventAction(const G4Event *event)
         analMan->FillNtupleDColumn(1, i - 1, timing0 - GetTiming(vecOfPhotonArrivalTime[i]));
       }*/
 
-#ifndef SCINTBAR
+/*#ifndef SCINTBAR
 	for (unsigned int i = 0; i < vecOfPhotonArrivalTime.size(); i++) {
         analMan->FillNtupleDColumn(2, i , GetTiming(vecOfPhotonArrivalTime[i])+biasVec[i]+G4RandGauss::shoot(0.0, stdVec[i]));
         analMan->FillNtupleDColumn(2, i+4 , G4RandGauss::shoot(vecOfPhotonArrivalTime[i].size(),2));
@@ -77,15 +83,23 @@ void NonSegmented_EventAction::EndOfEventAction(const G4Event *event)
 
 #else
 	for (unsigned int i = 0; i < vecOfPhotonArrivalTime.size(); i++) {
-        analMan->FillNtupleDColumn(1, i , GetTiming(vecOfPhotonArrivalTime[i])+biasVec[i]+G4RandGauss::shoot(0.0, stdVec[i]));
-        analMan->FillNtupleDColumn(1, i+4 , G4RandGauss::shoot(vecOfPhotonArrivalTime[i].size(),2));
+        analMan->FillNtupleDColumn(2, i , GetTiming(vecOfPhotonArrivalTime[i])+biasVec[i]+G4RandGauss::shoot(0.0, stdVec[i]));
+        analMan->FillNtupleDColumn(2, i+4 , G4RandGauss::shoot(vecOfPhotonArrivalTime[i].size(),2));
       }
-#endif
+#endif*/
+	for (unsigned int i = 0; i < vecOfPhotonArrivalTime.size(); i++) {
+        analMan->FillNtupleDColumn(2, i , GetTiming(vecOfPhotonArrivalTime[i])+biasVec[i]+G4RandGauss::shoot(0.0, stdVec[i]));
+        analMan->FillNtupleDColumn(2, i+4 , G4RandGauss::shoot(vecOfPhotonArrivalTime[i].size(),2));
+      }
+
       // Get Hit point on Slab, currently taking the hit point on top surface
       NonSegmented_Slab_Hit *slabHit = (*slabHitCollection)[0];
       //slabHit->Print();
       analMan->FillNtupleDColumn(2, 8, slabHit->GetX());
       analMan->FillNtupleDColumn(2, 9, slabHit->GetZ());
+      //analMan->FillNtupleDColumn<double>(2, 13, vecOfPhotonArrivalTime[0]);
+      
+     fRunAction->FillPulse(vecOfPhotonArrivalTime[0]);      
     }
   } else {
     // std::cout << "Required Hit Collection NOT found...." << std::endl;

@@ -3,7 +3,10 @@
 
 #include "G4UserEventAction.hh"
 #include "G4Event.hh"
+#include "NonSegmented_RunAction.h"
 class NonSegmented_EventAction : public G4UserEventAction {
+
+    NonSegmented_RunAction *fRunAction;
 public:
     NonSegmented_EventAction();
     virtual ~NonSegmented_EventAction();
